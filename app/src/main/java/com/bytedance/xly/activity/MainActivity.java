@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(path);
             if (file.exists()) {
                 result.add(path);
-              Log.i(TAG, path);
+            //  Log.i(TAG, path);
             }
         }
 

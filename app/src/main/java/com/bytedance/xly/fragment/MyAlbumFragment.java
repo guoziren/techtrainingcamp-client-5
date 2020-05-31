@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bytedance.xly.BuildConfig;
+import com.bytedance.xly.activity.PhotoActivity;
 import com.ibbhub.album.AlbumBean;
 import com.ibbhub.album.AlbumFragment;
 import com.ibbhub.album.ITaDecoration;
@@ -63,7 +65,7 @@ public class MyAlbumFragment extends AlbumFragment {
 
     @Override
     public void onChooseModeChange(boolean isChoose) {
-        ((AlbumActivity)getActivity()).onChooseModeChange(isChoose);
+        ((PhotoActivity)getActivity()).onChooseModeChange(isChoose);
     }
 
     public static RequestOptions buildOptions() {
@@ -75,6 +77,6 @@ public class MyAlbumFragment extends AlbumFragment {
 
     @Override
     public void start2Preview(ArrayList<AlbumBean> data, int pos) {
-        MyPreviewActivity.start(getContext(), data, pos);
+       // MyPreviewActivity.start(getContext(), data, pos);
     }
 }

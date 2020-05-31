@@ -1,6 +1,7 @@
 package com.bytedance.xly.BigPicture;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
+import com.bytedance.xly.activity.FastShareActivity;
 
 
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ public class Main2Activity extends AppCompatActivity {
     private int currentPage;
     private GestureDetector gd1;//手势
     private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 1;
+    private Button mBtn_share;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,22 @@ public class Main2Activity extends AppCompatActivity {
         }
 
         initView();
+        initEvent();
 
+    }
+
+    private void initEvent() {
+        mBtn_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(Main2Activity.this);
+//
+//                builder.setMessage("正在搜索局域网中的设备...");
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+                 startActivity(new Intent(Main2Activity.this, FastShareActivity.class));
+            }
+        });
     }
 
     @Override
@@ -56,6 +75,7 @@ public class Main2Activity extends AppCompatActivity {
         picturePath = intent.getStringArrayListExtra("picturePath");
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
+        mBtn_share = findViewById(R.id.share);
 
         ViewPage.setOnTouchListener(new View.OnTouchListener() {
             @Override

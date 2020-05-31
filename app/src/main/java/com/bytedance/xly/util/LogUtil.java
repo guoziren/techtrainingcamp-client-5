@@ -1,4 +1,4 @@
-package com.blts.himalaya.utils;
+package com.bytedance.xly.util;
 
 import android.util.Log;
 

@@ -6,5 +6,5 @@ package com.bytedance.xly.interfaces;
  * 创建时间：      2020/5/30 1:21 AM
  *
  */
-public class ILocalSearchPresenter {
+public interface ILocalSearchPresenter {
 }
