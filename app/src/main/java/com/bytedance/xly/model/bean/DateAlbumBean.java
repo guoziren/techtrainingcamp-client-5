@@ -15,9 +15,9 @@ import java.util.List;
  *
  */
 public class DateAlbumBean   {
-    public long date;
-    public String dateString;
-    public List<AlbumBean> itemList = new ArrayList<>();
+    private long date;
+    private String dateString;
+    private List<AlbumBean> itemList = new ArrayList<>();
 
     public long getDate() {
         return date;

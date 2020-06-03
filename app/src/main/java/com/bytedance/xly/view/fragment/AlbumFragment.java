@@ -96,8 +96,8 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
      */
     public void cancelChoose() {
         for (int i = 0; i < choosedCache.size(); i++) {
-            for (AlbumBean mb : choosedCache.get(i).itemList) {
-                mb.isChecked = false;
+            for (AlbumBean mb : choosedCache.get(i).getItemList()) {
+                mb.setChecked(false);
             }
         }
         choosedCache.clear();
@@ -143,7 +143,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Override
     public void onItemClick(AlbumBean albumBean, View v) {
         DateAlbumBean timeBean = new DateAlbumBean();
-        timeBean.setDate(albumBean.date);
+        timeBean.setDate(albumBean.getDate());
         if (isChooseMode) {
             int index = choosedCache.indexOf(timeBean);
             List<AlbumBean> mbList;
@@ -154,10 +154,10 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
                 timeBean.setItemList(mbList);
                 choosedCache.add(timeBean);
             } else {
-                mbList = choosedCache.get(index).itemList;
+                mbList = choosedCache.get(index).getItemList();
 
                 //如果被选中，则添加到缓存中
-                if (albumBean.isChecked) {
+                if (albumBean.isChecked()) {
                     mbList.add(albumBean);
                 } else {
                     mbList.remove(albumBean);
@@ -170,7 +170,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         } else {
             int index = mData.indexOf(timeBean);
             DateAlbumBean ab = mData.get(index);
-            index = ab.itemList.indexOf(albumBean);
+            index = ab.getItemList().indexOf(albumBean);
             if (index >= 0) {
                 // start2Preview((ArrayList<AlbumBean>) ab.itemList, index);
             }

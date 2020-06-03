@@ -13,11 +13,11 @@ import java.util.Objects;
  *
  */
 public class AlbumBean   {
-    public String path;
-    public long date;
-    public String dateString;
+    private String path;
+    private long date;
+
     private File file;
-    public boolean isChecked;
+    private boolean isChecked;
 
     public String getPath() {
         return path;
@@ -35,13 +35,7 @@ public class AlbumBean   {
         this.date = date;
     }
 
-    public String getDateString() {
-        return dateString;
-    }
 
-    public void setDateString(String dateString) {
-        this.dateString = dateString;
-    }
 
     public File getFile() {
         return file;

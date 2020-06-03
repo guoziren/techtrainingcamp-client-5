@@ -20,57 +20,72 @@ import java.util.Date;
  */
 public class DateUtil {
     private static final String TAG = "DateUtil";
-    public static Date parseDate(File file) {
+    private static DateFormat sFormat1 = new SimpleDateFormat("yyyy:MM:dd");
+    private static DateFormat sFormat2 = new SimpleDateFormat("yyyy年MM月dd日");
+    ;
 
+    public static Date parseDate(File file) {
         ExifInterface exif = null;
         Date date1 = null;
+        String date = null;
         try {
             exif = new ExifInterface(file.getAbsolutePath());
+            date = exif.getAttribute(ExifInterface.TAG_DATETIME);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String date = exif.getAttribute(ExifInterface.TAG_DATETIME);
+        // Log.d(TAG, "parseDate: " + date);
 
-       // Log.d(TAG, "parseDate: " + date);
-        try {
-            if (!TextUtils.isEmpty(date)) {
-                date1 = convertToDate(date);
-            } else {
+        if (!TextUtils.isEmpty(date)) {
+            date1 = convertToDate(date);
+        } else {
 //                date1 = DateUtils.convertToDate("1995:03:13 22:38:20");
-                date1 = new Date(file.lastModified());
-            }
-            // Log.i("date", date);
-        } catch (Exception e) {
+            date1 = new Date(file.lastModified());
+        }
+        return date1;
+    }
+    public static long pasreFileTimeMills(File file) {
+        ExifInterface exif = null;
+        long date1 = 0;
+        String date = null;
+        try {
+            exif = new ExifInterface(file.getAbsolutePath());
+            date = exif.getAttribute(ExifInterface.TAG_DATETIME);
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+//         Log.e(TAG, "parseDate: " + date);
 
+        if (!TextUtils.isEmpty(date)) {
+            date1 = convertToTimeMills(date);
+        } else {
+//                date1 = DateUtils.convertToDate("1995:03:13 22:38:20");
+            date1 = file.lastModified();
         }
         return date1;
     }
 
     public static String converToString(Object date) {
-        DateFormat df = new SimpleDateFormat("yyyy:MM:dd");
-
-        return df.format(date);
+        return sFormat1.format(date);
     }
 
 
-    public static Date convertToDate(String strDate) throws Exception {
-        DateFormat df = new SimpleDateFormat("yyyy:MM:dd");
-//        return df.parse(strDate);
+    public static Date convertToDate(String strDate) {
         try {
-            return   df.parse(strDate);
-        }catch (ParseException e){
-            Date date = new Date();
-            date.setTime(Long.parseLong(strDate));
-
-            return date;
+            return sFormat1.parse(strDate);
+        } catch (ParseException e) {
+            return new Date(Long.parseLong(strDate));
         }
-
-
+    }
+    public static long convertToTimeMills(String strDate) {
+        try {
+            return sFormat1.parse(strDate).getTime();
+        } catch (ParseException e) {
+            return Long.parseLong(strDate);
+        }
     }
 
     public static String converToString(long timeMillion) {
-        DateFormat df = new SimpleDateFormat("MM月dd日");
-        return df.format(timeMillion);
+        return sFormat2.format(timeMillion);
     }
 }

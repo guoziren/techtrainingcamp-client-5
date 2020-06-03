@@ -109,8 +109,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
                 @Override
                 public void onClick(View v) {
                     if (AlbumFragment.isChooseMode) {
-                        albumBean.setChecked(!albumBean.isChecked);
-                        setChecked(albumBean.isChecked);
+                        albumBean.setChecked(!albumBean.isChecked());
+                        setChecked(albumBean.isChecked());
                     }else if (listener != null) {
                         listener.onItemClick(albumBean, v);
                     }

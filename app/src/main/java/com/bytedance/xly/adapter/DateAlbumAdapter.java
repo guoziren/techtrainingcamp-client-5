@@ -11,6 +11,7 @@ import com.bytedance.xly.R;
 import com.bytedance.xly.interfaces.IAdapterListener;
 import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.model.bean.DateAlbumBean;
+import com.bytedance.xly.util.DateUtil;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.UITool;
 import com.bytedance.xly.view.view.GridDecoration;
@@ -78,7 +79,7 @@ public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Hold
                 return;
             }
             TextView tv_date = itemView.findViewById(R.id.tv_date);
-            tv_date.setText(dateAlbumBean.getDateString());
+            tv_date.setText(DateUtil.converToString(dateAlbumBean.getDate()));
 
             RecyclerView recyclerView = itemView.findViewById(R.id.rc_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,4);
@@ -89,7 +90,7 @@ public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Hold
                 recyclerView.addItemDecoration(new GridDecoration(4,space,false));
             }
 
-            AlbumAdapter albumAdapter = new AlbumAdapter(dateAlbumBean.itemList,gridLayoutManager);
+            AlbumAdapter albumAdapter = new AlbumAdapter(dateAlbumBean.getItemList(),gridLayoutManager);
             albumAdapter.setSpace(space);
             albumAdapter.setListener(listener);
             recyclerView.setAdapter(albumAdapter);
