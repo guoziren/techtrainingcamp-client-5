@@ -19,7 +19,6 @@ import java.util.Date;
  *
  */
 public class DateUtil {
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日");
     private static final String TAG = "DateUtil";
     public static Date parseDate(File file) {
 
@@ -71,7 +70,7 @@ public class DateUtil {
     }
 
     public static String converToString(long timeMillion) {
-        DateFormat df = new SimpleDateFormat("yyyy:MM:dd");
+        DateFormat df = new SimpleDateFormat("MM月dd日");
         return df.format(timeMillion);
     }
 }
