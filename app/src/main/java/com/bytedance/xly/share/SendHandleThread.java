@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 
-import com.bytedance.xly.activity.FastShareActivity;
+import com.bytedance.xly.view.activity.FastShareActivity;
 import com.bytedance.xly.util.LogUtil;
 
 import java.io.IOException;

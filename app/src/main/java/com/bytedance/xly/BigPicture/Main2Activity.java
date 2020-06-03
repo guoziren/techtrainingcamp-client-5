@@ -1,7 +1,6 @@
 package com.bytedance.xly.BigPicture;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
-import com.bytedance.xly.activity.FastShareActivity;
+import com.bytedance.xly.view.activity.FastShareActivity;
 
 
 import java.util.ArrayList;

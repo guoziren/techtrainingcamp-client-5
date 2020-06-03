@@ -9,14 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.FastShareActivity"></activity>
+        <activity android:name=".view.activity.FastShareActivity"></activity>
         <activity
             android:name=".BigPicture.Main2Activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".view.activity.MainActivity">
 
         </activity>
-        <activity android:name=".activity.PhotoActivity">
+        <activity android:name=".view.activity.PhotoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
