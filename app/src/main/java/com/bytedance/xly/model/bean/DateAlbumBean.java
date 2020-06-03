@@ -14,7 +14,7 @@ import java.util.List;
  * 创建时间：      2020/6/3 11:10 AM
  *
  */
-public class DateAlbumBean implements Parcelable {
+public class DateAlbumBean   {
     public long date;
     public String dateString;
     public List<AlbumBean> itemList = new ArrayList<>();
@@ -45,35 +45,7 @@ public class DateAlbumBean implements Parcelable {
     public DateAlbumBean(){
 
     }
-    public DateAlbumBean(Parcel in) {
-        date = in.readLong();
-        dateString = in.readString();
-        itemList = in.createTypedArrayList(AlbumBean.CREATOR);
-    }
 
-    public static final Creator<DateAlbumBean> CREATOR = new Creator<DateAlbumBean>() {
-        @Override
-        public DateAlbumBean createFromParcel(Parcel in) {
-            return new DateAlbumBean(in);
-        }
-
-        @Override
-        public DateAlbumBean[] newArray(int size) {
-            return new DateAlbumBean[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(date);
-        dest.writeString(dateString);
-        dest.writeTypedList(itemList);
-    }
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof DateAlbumBean) {

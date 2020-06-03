@@ -11,6 +11,7 @@ import com.bytedance.xly.R;
 import com.bytedance.xly.interfaces.IAdapterListener;
 import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.model.bean.DateAlbumBean;
+import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.UITool;
 import com.bytedance.xly.view.view.GridDecoration;
 
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
  *
  */
 public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Holder> {
+    private static final String TAG = "DateAlbumAdapter";
     private List<DateAlbumBean> mData = new ArrayList<>();
     private Context mContext;
     private IAdapterListener<AlbumBean> listener;
@@ -81,8 +83,11 @@ public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Hold
             RecyclerView recyclerView = itemView.findViewById(R.id.rc_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,4);
             recyclerView.setLayoutManager(gridLayoutManager);
-            int space = UITool.dip2px(mContext,1);
-            recyclerView.addItemDecoration(new GridDecoration(4,space,false));
+            int space = UITool.dip2px(mContext,2);
+            //外层recyclerview滑动时，嵌套的recyclerview会多次addItemDecoration导致间隙会逐渐变大
+            if (recyclerView.getItemDecorationCount() == 0) {
+                recyclerView.addItemDecoration(new GridDecoration(4,space,false));
+            }
 
             AlbumAdapter albumAdapter = new AlbumAdapter(dateAlbumBean.itemList,gridLayoutManager);
             albumAdapter.setSpace(space);

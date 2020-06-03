@@ -15,6 +15,7 @@ import com.bytedance.xly.interfaces.IAdapterListener;
 import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.view.fragment.AlbumFragment;
 
+import java.io.File;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -92,7 +93,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
             ivThumbLayoutParams.height = width;
             ivThumbLayoutParams.width = width;
             mIvThumb.setLayoutParams(ivThumbLayoutParams);
-            loadOverrideImage(albumBean.path,mIvThumb,width);
+
+            loadOverrideImage(albumBean.getFile(),mIvThumb,width);
 
             //  LogUtil.d(TAG, "bind: 图片width " + ivThumbLayoutParams.width + " height " + ivThumbLayoutParams.height);
 
@@ -154,6 +156,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
     public void loadOverrideImage(String path, ImageView iv) {
         Glide.with(iv)
                 .load(path)
+                .placeholder(R.drawable.iv_default)
                 .thumbnail(0.1f)
                 .apply(buildOptions())
                 .into(iv);
@@ -161,22 +164,32 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
     public void loadOverrideImage(String path, ImageView iv,int size) {
         Glide.with(iv)
                 .load(path)
-                .thumbnail(0.1f)
+              //  .thumbnail(0.1f)
+                .apply(buildOptions(size))
+                .into(iv);
+    }
+    public void loadOverrideImage(File file, ImageView iv, int size) {
+        Glide.with(iv)
+                .load(file)
+              //  .thumbnail(0.1f)
                 .apply(buildOptions(size))
                 .into(iv);
     }
     public  RequestOptions buildOptions() {
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.override(100, 100);
+        requestOptions.override(100, 100)
 //        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        requestOptions.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+//        requestOptions.error(R.drawable.ic_album);
+
         return requestOptions;
     }
     public  RequestOptions buildOptions(int size) {
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.override(size, size);
+        RequestOptions requestOptions = new RequestOptions()
+        .override(size, size)
 //        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        requestOptions.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+               // .placeholder(R.drawable.iv_default);
         return requestOptions;
     }
     public void loadImage(String path, ImageView iv) {

@@ -66,8 +66,9 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
         cal1.set(Calendar.SECOND, 0);
         cal1.set(Calendar.MILLISECOND, 0);
         AlbumBean albumBean = new AlbumBean();
-        albumBean.date = cal1.getTime().getTime();
-        albumBean.path = file.getAbsolutePath();
+        albumBean.setDate(cal1.getTime().getTime());
+        albumBean.setPath( file.getAbsolutePath());
+        albumBean.setFile(file);
         return albumBean;
     }
 
