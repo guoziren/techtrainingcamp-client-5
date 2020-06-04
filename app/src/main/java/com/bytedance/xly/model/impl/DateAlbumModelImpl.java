@@ -114,7 +114,7 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
 
         @Override
         protected List<DateAlbumBean> doInBackground(Context... contexts) {
-            long begin = System.currentTimeMillis();
+         //   long begin = System.currentTimeMillis();
             List<DateAlbumBean> mData = new ArrayList<>();
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             ContentResolver contentResolver = contexts[0].getContentResolver();
@@ -147,12 +147,12 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                     }
                 }
             }
-            long mid = System.currentTimeMillis();
+           // long mid = System.currentTimeMillis();
             sortList(mData);
-            long end = System.currentTimeMillis();
-            LogUtil.e(TAG, "doInBackground: 读取数据ms " + (mid - begin) );
-            LogUtil.e(TAG, "doInBackground: 排序时间ms " + (end - mid));
-            LogUtil.e(TAG, "doInBackground: 总时间  ms "+(end - begin));
+//            long end = System.currentTimeMillis();
+//            LogUtil.e(TAG, "doInBackground: 读取数据ms " + (mid - begin) );
+//            LogUtil.e(TAG, "doInBackground: 排序时间ms " + (end - mid));
+//            LogUtil.e(TAG, "doInBackground: 总时间  ms "+(end - begin));
             return mData;
         }
 
