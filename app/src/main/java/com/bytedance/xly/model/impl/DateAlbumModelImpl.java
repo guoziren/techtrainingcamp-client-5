@@ -15,6 +15,7 @@ import com.bytedance.xly.util.DateUtil;
 import com.bytedance.xly.util.LogUtil;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -72,11 +73,41 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
         AlbumBean albumBean = new AlbumBean();
         albumBean.setDate(mCal1.getTime().getTime());
         albumBean.setPath( file.getAbsolutePath());
-        albumBean.setFile(file);
         long b3 = System.currentTimeMillis();
 //        LogUtil.e(TAG, "doInBackground: 步骤2 ms" + (b3 - b2));
         return albumBean;
     }
+    private AlbumBean convertFileToAlbumBean(File file,String dataAdded) {
+
+        long fileTimeMills = Long.parseLong(dataAdded);
+        mCal1.setTimeInMillis(fileTimeMills);
+        // 将时分秒,毫秒域清零
+        mCal1.set(Calendar.HOUR_OF_DAY, 0);
+        mCal1.set(Calendar.MINUTE, 0);
+        mCal1.set(Calendar.SECOND, 0);
+        mCal1.set(Calendar.MILLISECOND, 0);
+        AlbumBean albumBean = new AlbumBean();
+        albumBean.setDate(mCal1.getTime().getTime());
+        albumBean.setPath( file.getAbsolutePath());
+        return albumBean;
+    }
+    private AlbumBean convertFileToAlbumBean(String path,String thumbnailPath,String dataAdded) {
+
+        long fileTimeMills = Long.parseLong(dataAdded);
+        mCal1.setTimeInMillis(fileTimeMills);
+        // 将时分秒,毫秒域清零
+        mCal1.set(Calendar.HOUR_OF_DAY, 0);
+        mCal1.set(Calendar.MINUTE, 0);
+        mCal1.set(Calendar.SECOND, 0);
+        mCal1.set(Calendar.MILLISECOND, 0);
+        AlbumBean albumBean = new AlbumBean();
+        albumBean.setDate(mCal1.getTime().getTime());
+        albumBean.setPath(path);
+        albumBean.setThumbPath(thumbnailPath);
+        return albumBean;
+    }
+
+
 
 
     class GetDataTask extends AsyncTask<Context,Void,List<DateAlbumBean>>{
@@ -87,35 +118,33 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
             List<DateAlbumBean> mData = new ArrayList<>();
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             ContentResolver contentResolver = contexts[0].getContentResolver();
-            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            String[] projection = new String[]{MediaStore.Images.Media.DATA,MediaStore.Images.Media.DATE_TAKEN,MediaStore.Images.Thumbnails.DATA};
+//            Cursor cursor = contentResolver.query(uri, projection, null, null, null);
+            Cursor cursor = contentResolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_TAKEN+" desc");
             if (cursor == null || cursor.getCount() <= 0) {
                 return null; // 没有图片
             }
             while (cursor.moveToNext()) {
-                int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                int index = cursor.getColumnIndexOrThrow(projection[0]);
+                int index_data_taken = cursor.getColumnIndexOrThrow(projection[1]);
+                int index_data_thumbnails = cursor.getColumnIndexOrThrow(projection[2]);
                 String path = cursor.getString(index); // 文件地址
+                String data_taken = cursor.getString(index_data_taken); // 文件添加时间
+                String data_thumbnails = cursor.getString(index_data_thumbnails); // 文件缩略图地址
                 // Log.d(TAG, "getSystemPhotoList: path = " + path);
                 File file = new File(path);
                 if (file.exists()) {
-                    long b1 = System.currentTimeMillis();
-                    AlbumBean albumBean = convertFileToAlbumBean(file);
-                    long b2 = System.currentTimeMillis();
-//                    LogUtil.e(TAG, "doInBackground: 步骤1 ms" + (b2 - b1));
+//                    AlbumBean albumBean = convertFileToAlbumBean(file);
+                    AlbumBean albumBean = convertFileToAlbumBean(path,data_thumbnails,data_taken);
                     DateAlbumBean DateAlbumBean = new DateAlbumBean();
                     DateAlbumBean.setDate(albumBean.getDate());
-                    long b3 = System.currentTimeMillis();
-//                    LogUtil.e(TAG, "doInBackground: 步骤2 ms" + (b3 - b2));
                     int index1 = mData.indexOf(DateAlbumBean);
-                    long b4 = System.currentTimeMillis();
-//                    LogUtil.e(TAG, "doInBackground: 步骤3 ms" + (b4 - b3));
                     if (index1 >= 0) {
                         mData.get(index1).getItemList().add(albumBean);
                     } else {
                         DateAlbumBean.getItemList().add(albumBean);
                         mData.add(DateAlbumBean);
                     }
-                    long b5 = System.currentTimeMillis();
-//                    LogUtil.e(TAG, "doInBackground: 步骤4 ms" + (b5 - b4));
                 }
             }
             long mid = System.currentTimeMillis();

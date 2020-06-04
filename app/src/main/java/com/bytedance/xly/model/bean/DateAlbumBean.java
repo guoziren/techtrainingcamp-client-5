@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -17,6 +18,7 @@ import java.util.List;
 public class DateAlbumBean   {
     private long date;
     private String dateString;
+
     private List<AlbumBean> itemList = new ArrayList<>();
 
     public long getDate() {

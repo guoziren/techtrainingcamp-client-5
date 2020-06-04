@@ -24,7 +24,7 @@ public class DateUtil {
     private static DateFormat sFormat2 = new SimpleDateFormat("yyyy年MM月dd日");
     ;
 
-    public static Date parseDate(File file) {
+    public static Date parseDate(File file) throws ParseException {
         ExifInterface exif = null;
         Date date1 = null;
         String date = null;
@@ -70,11 +70,11 @@ public class DateUtil {
     }
 
 
-    public static Date convertToDate(String strDate) {
+    public static Date convertToDate(String strDate) throws ParseException {
         try {
             return sFormat1.parse(strDate);
         } catch (ParseException e) {
-            return new Date(Long.parseLong(strDate));
+             return  new Date(Long.parseLong(strDate));
         }
     }
     public static long convertToTimeMills(String strDate) {

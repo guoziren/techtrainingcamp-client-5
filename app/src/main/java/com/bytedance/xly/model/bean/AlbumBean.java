@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Objects;
 
 /*
@@ -13,11 +14,18 @@ import java.util.Objects;
  *
  */
 public class AlbumBean   {
-    private String path;
-    private long date;
+    private String path;//原图路径
+    private String thumbPath;//缩略图路径
+    private long date;//图片日期
+    private boolean isChecked;//是否被选中
 
-    private File file;
-    private boolean isChecked;
+    public String getThumbPath() {
+        return thumbPath;
+    }
+
+    public void setThumbPath(String thumbPath) {
+        this.thumbPath = thumbPath;
+    }
 
     public String getPath() {
         return path;
@@ -36,14 +44,6 @@ public class AlbumBean   {
     }
 
 
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
 
     public boolean isChecked() {
         return isChecked;

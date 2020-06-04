@@ -94,7 +94,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
             ivThumbLayoutParams.width = width;
             mIvThumb.setLayoutParams(ivThumbLayoutParams);
 
-            loadOverrideImage(albumBean.getFile(),mIvThumb,width);
+            loadOverrideImage(albumBean.getThumbPath(),mIvThumb,width);
 
             //  LogUtil.d(TAG, "bind: 图片width " + ivThumbLayoutParams.width + " height " + ivThumbLayoutParams.height);
 
