@@ -1,5 +1,6 @@
 package com.bytedance.xly.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bytedance.xly.BigPicture.Main2Activity;
 import com.bytedance.xly.R;
 import com.bytedance.xly.adapter.DateAlbumAdapter;
 import com.bytedance.xly.interfaces.IAdapterListener;
@@ -19,8 +21,10 @@ import com.bytedance.xly.view.activity.PhotoActivity;
 import com.bytedance.xly.view.view.AlbumBottomMenu;
 import com.bytedance.xly.view.view.IDateAlbumViewCallback;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,7 +42,9 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     public static boolean isChooseMode = false;
     private List<DateAlbumBean> choosedCache = new ArrayList<>();
     private static final String TAG = "AlbumFragment";
+
     private List<DateAlbumBean> mData = new ArrayList<>();
+
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private AlbumBottomMenu mBottomMenu;
@@ -46,12 +52,12 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     private DateAlbumAdapter mAdapter;
     private AlbumPresenterImpl mAlbumPresenter;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album,container,false);
         initView(view);
-
         return view;
     }
 
@@ -61,6 +67,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         mBottomMenu = view.findViewById(R.id.album_menu);
 
         mAdapter = new DateAlbumAdapter(mData,getContext());
+
         mAdapter.setListener(this);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -172,7 +179,11 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             DateAlbumBean ab = mData.get(index);
             index = ab.getItemList().indexOf(albumBean);
             if (index >= 0) {
-                // start2Preview((ArrayList<AlbumBean>) ab.itemList, index);
+                //start2Preview((ArrayList<AlbumBean>) ab.itemList, index);
+                Intent intent = new Intent(getContext(), Main2Activity.class);
+                intent.putExtra("picturePath", (Serializable) ab.getItemList());
+                intent.putExtra("CurrentPage",index);
+                Objects.requireNonNull(getContext()).startActivity(intent);//去激活Main2Activity
             }
         }
     }

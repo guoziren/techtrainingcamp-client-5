@@ -17,13 +17,15 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
+import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.view.activity.FastShareActivity;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
-    private ArrayList<String> picturePath;
+    private List<AlbumBean> picturePath;
     private ViewPager ViewPage;
     private int currentPage;
     private GestureDetector gd1;//手势
@@ -71,7 +73,7 @@ public class Main2Activity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         Intent intent = getIntent();
-        picturePath = intent.getStringArrayListExtra("picturePath");
+        this.picturePath = (List<AlbumBean>) intent.getSerializableExtra("picturePath");
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
         mBtn_share = findViewById(R.id.share);
@@ -93,12 +95,12 @@ public class Main2Activity extends AppCompatActivity {
         ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             public Fragment getItem(int i) {
-                return SplashFragment.newInstance(picturePath.get(i));
+                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
             }
 
             @Override
             public int getCount() {
-                return picturePath.size();
+                return Main2Activity.this.picturePath.size();
             }
         });
         ViewPage.setCurrentItem(currentPage);
