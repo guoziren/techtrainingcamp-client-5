@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  * 创建时间：      2020/6/3 10:42 AM
  *
  */
-public class AlbumBean   {
+public class AlbumBean implements Serializable {
     private String path;//原图路径
     private String thumbPath;//缩略图路径
     private long date;//图片日期
