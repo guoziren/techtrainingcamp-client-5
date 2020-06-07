@@ -78,6 +78,17 @@
                 android:text="@string/button3"
                 style="?android:attr/buttonBarButtonStyle"
                 android:textColor="#FA1908"/>
+            <Button
+                android:id="@+id/share"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                tools:ignore="Suspicious0dp"
+                android:scaleType="center"
+                android:background="#ffffff"
+                android:layout_weight="0.5"
+                android:text="分享"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textColor="#FA1908"/>
 
         </LinearLayout>
 

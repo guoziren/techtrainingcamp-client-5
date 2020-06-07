@@ -1,4 +1,4 @@
-package com.bytedance.xly.activity;
+package com.bytedance.xly.view.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(path);
             if (file.exists()) {
                 result.add(path);
-              Log.i(TAG, path);
+            //  Log.i(TAG, path);
             }
         }
 
