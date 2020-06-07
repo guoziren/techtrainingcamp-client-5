@@ -57,7 +57,7 @@ public class LocalNetListAdapter extends RecyclerView.Adapter<LocalNetListAdapte
         public void setData(String ip){
 //            if (!TextUtils.isEmpty(ip)){
                 TextView tv_ip = itemView.findViewById(R.id.textView2);
-                tv_ip.setText("接收方IP地址: " +ip +" 点我开始传输文件");
+                tv_ip.setText(ip);
 //            }
         }
     }

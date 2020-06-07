@@ -8,8 +8,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionMenuTextColor">#ffffff</item>
-
-        <item name="android:textColorSecondary">#ffffff</item>
     </style>
 
 </resources>

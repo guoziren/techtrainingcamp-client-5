@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.bytedance.xly.model.IDataCallback;
 import com.bytedance.xly.model.bean.AlbumBean;
@@ -32,6 +33,8 @@ import java.util.List;
 public class DateAlbumModelImpl  implements IDateAlbumModel {
     private static final String TAG = "DateAlbumModelImpl";
     private IDataCallback<List<DateAlbumBean>> mCallback;
+    private Calendar mCal1 = Calendar.getInstance();
+
 
     @Override
     public void getDateAlbumList(Context context, IDataCallback<List<DateAlbumBean>> callback) {
@@ -57,6 +60,56 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
         });
 
     }
+    private AlbumBean convertFileToAlbumBean(File file) {
+
+       // Date fileDate = DateUtil.parseDate(file);
+        long fileTimeMills = DateUtil.pasreFileTimeMills(file);
+       //  Log.d(TAG, "convertFileToAlbumBean: " + fileDate);
+        mCal1.setTimeInMillis(fileTimeMills);
+        // 将时分秒,毫秒域清零
+        mCal1.set(Calendar.HOUR_OF_DAY, 0);
+        mCal1.set(Calendar.MINUTE, 0);
+        mCal1.set(Calendar.SECOND, 0);
+        mCal1.set(Calendar.MILLISECOND, 0);
+        AlbumBean albumBean = new AlbumBean();
+        albumBean.setDate(mCal1.getTime().getTime());
+        albumBean.setPath( file.getAbsolutePath());
+        long b3 = System.currentTimeMillis();
+     //  LogUtil.e(TAG, "doInBackground: 步骤2 ms" + (b3 - b2));
+        return albumBean;
+    }
+    private AlbumBean convertFileToAlbumBean(File file,String dataAdded) {
+
+        long fileTimeMills = Long.parseLong(dataAdded);
+        mCal1.setTimeInMillis(fileTimeMills);
+        // 将时分秒,毫秒域清零
+        mCal1.set(Calendar.HOUR_OF_DAY, 0);
+        mCal1.set(Calendar.MINUTE, 0);
+        mCal1.set(Calendar.SECOND, 0);
+        mCal1.set(Calendar.MILLISECOND, 0);
+        AlbumBean albumBean = new AlbumBean();
+        albumBean.setDate(mCal1.getTime().getTime());
+        albumBean.setPath( file.getAbsolutePath());
+        return albumBean;
+    }
+    private AlbumBean convertFileToAlbumBean(String path,String thumbnailPath,String dataAdded) {
+
+        long fileTimeMills = Long.parseLong(dataAdded);
+        mCal1.setTimeInMillis(fileTimeMills);
+        // 将时分秒,毫秒域清零
+        mCal1.set(Calendar.HOUR_OF_DAY, 0);
+        mCal1.set(Calendar.MINUTE, 0);
+        mCal1.set(Calendar.SECOND, 0);
+        mCal1.set(Calendar.MILLISECOND, 0);
+        AlbumBean albumBean = new AlbumBean();
+        albumBean.setDate(mCal1.getTime().getTime());
+        albumBean.setPath(path);
+        albumBean.setThumbPath(thumbnailPath);
+        return albumBean;
+    }
+
+
+
 
     class GetDataTask extends AsyncTask<Context,Void,List<DateAlbumBean>>{
 
@@ -72,10 +125,6 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
             if (cursor == null || cursor.getCount() <= 0) {
                 return null; // 没有图片
             }
-            long before = -1;
-            DateAlbumBean datealbumbean = null;
-            LogUtil.e(TAG, "cursor size: " + cursor.getCount());
-            int count = 0;
             while (cursor.moveToNext()) {
                 int index = cursor.getColumnIndexOrThrow(projection[0]);
                 int index_data_taken = cursor.getColumnIndexOrThrow(projection[1]);
@@ -85,40 +134,26 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                 String data_thumbnails = cursor.getString(index_data_thumbnails); // 文件缩略图地址
                 // Log.d(TAG, "getSystemPhotoList: path = " + path);
                 File file = new File(path);
-
                 if (file.exists()) {
-                    AlbumBean albumBean = new AlbumBean();
-                    albumBean.setThumbPath(data_thumbnails);
-                    if (data_taken == null){
-                        continue;
-                    }
-
-                    long date = Long.parseLong(data_taken);
-                    albumBean.setDate(date);
-                    albumBean.setPath(path);
-//                    DateAlbumBean datealbumbean = new DateAlbumBean();
-//                    datealbumbean.setDate(albumBean.getDate());
-//                    int index1 = mData.indexOf(datealbumbean);
-//                    if (index1 >= 0) {
-//                        mData.get(index1).getItemList().add(albumBean);
-//                    } else {
-//                        datealbumbean.getItemList().add(albumBean);
-//                        mData.add(datealbumbean);
-//                    }
-                    if (date / DateAlbumBean.day != before / DateAlbumBean.day){
-                        if (before != -1){
-                            mData.add(datealbumbean);
-                        }
-                        before = date;
-                        datealbumbean = new DateAlbumBean();
-                        datealbumbean.setDate(date);
-                        datealbumbean.getItemList().add(albumBean);
-                    }else{
-                       datealbumbean.getItemList().add(albumBean);
+//                    AlbumBean albumBean = convertFileToAlbumBean(file);
+                    AlbumBean albumBean = convertFileToAlbumBean(path,data_thumbnails,data_taken);
+                    DateAlbumBean DateAlbumBean = new DateAlbumBean();
+                    DateAlbumBean.setDate(albumBean.getDate());
+                    int index1 = mData.indexOf(DateAlbumBean);
+                    if (index1 >= 0) {
+                        mData.get(index1).getItemList().add(albumBean);
+                    } else {
+                        DateAlbumBean.getItemList().add(albumBean);
+                        mData.add(DateAlbumBean);
                     }
                 }
             }
+           long mid = System.currentTimeMillis();
             sortList(mData);
+          long end = System.currentTimeMillis();
+           LogUtil.e(TAG, "doInBackground: 读取数据ms " + (mid - begin) );
+           LogUtil.e(TAG, "doInBackground: 排序时间ms " + (end - mid));
+            LogUtil.e(TAG, "doInBackground: 总时间  ms "+(end - begin));
             return mData;
         }
 

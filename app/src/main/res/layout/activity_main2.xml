@@ -22,7 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:id="@+id/text"
-            android:text="未来填写时间的"
             android:textColor="#FB0101"
             android:background="#ffffff"/>
 
@@ -33,28 +32,20 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/bianji"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
                 android:background="#ffffff"
                 android:layout_weight="0.5"
                 android:scaleType="center"
-                android:textColor="#FA0808"
+                android:textColor="#5CA4C5"
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button1"/>
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                tools:ignore="Suspicious0dp"
-                android:background="#ffffff"
-                android:layout_weight="0.5"
-                android:scaleType="center"
-                android:textColor="#FA0808"
-                style="?android:attr/buttonBarButtonStyle"
-                android:text="@string/button2"/>
 
             <Button
+                android:id="@+id/huaban"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
@@ -63,7 +54,7 @@
                 android:layout_weight="0.5"
                 android:text="@string/button3"
                 style="?android:attr/buttonBarButtonStyle"
-                android:textColor="#FA1908"/>
+                android:textColor="#5CA4C5"/>
             <Button
                 android:id="@+id/share"
                 android:layout_width="0dp"
@@ -74,7 +65,7 @@
                 android:layout_weight="0.5"
                 android:text="分享"
                 style="?android:attr/buttonBarButtonStyle"
-                android:textColor="#FA1908"/>
+                android:textColor="#5CA4C5"/>
 
         </LinearLayout>
 

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.bytedance.xly.BigPicture.Main2Activity;
 import com.bytedance.xly.R;
@@ -18,8 +17,6 @@ import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.model.bean.DateAlbumBean;
 import com.bytedance.xly.presenter.impl.AlbumPresenterImpl;
 import com.bytedance.xly.util.LogUtil;
-import com.bytedance.xly.util.ToastUtil;
-import com.bytedance.xly.view.activity.FastShareActivity;
 import com.bytedance.xly.view.activity.PhotoActivity;
 import com.bytedance.xly.view.view.AlbumBottomMenu;
 import com.bytedance.xly.view.view.IDateAlbumViewCallback;
@@ -45,7 +42,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     public static boolean isChooseMode = false;
     private List<DateAlbumBean> choosedCache = new ArrayList<>();
     private static final String TAG = "AlbumFragment";
-    public static final String PATHS = "PATHS";
+
     private List<DateAlbumBean> mData = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
@@ -88,19 +85,8 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
             @Override
             public void onShareClick() {
-                Intent intent = new Intent(getActivity(), FastShareActivity.class);
-                ArrayList<String> paths = new ArrayList<>();
-                if (choosedCache.size() == 0){
-                    ToastUtil.showToast(getActivity(), Toast.LENGTH_LONG,"尚未选择图片");
-                    return;
-                }
-                for (DateAlbumBean dateAlbumBean : choosedCache) {
-                    for (AlbumBean albumBean : dateAlbumBean.getItemList()) {
-                        paths.add(albumBean.getPath());
-                    }
-                }
-                intent.putStringArrayListExtra(PATHS,paths);
-                startActivity(intent);
+                //分享
+               // processShare();
             }
         });
 
@@ -209,12 +195,6 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
     @Override
     public void onAlubumDelete(AlbumBean albumBean) {
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
     }
 }

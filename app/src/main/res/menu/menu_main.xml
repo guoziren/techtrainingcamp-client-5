@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_choose"
         android:orderInCategory="60"
         android:title="选择"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_send"
-        android:orderInCategory="60"
-        android:title="发送"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_receive"
-        android:orderInCategory="60"
-        android:title="接收"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

@@ -6,13 +6,11 @@ import android.os.Message;
 
 import com.bytedance.xly.view.activity.FastShareActivity;
 import com.bytedance.xly.util.LogUtil;
-import com.bytedance.xly.view.fragment.TransmissionSendFragment;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 
 import androidx.annotation.NonNull;
 
@@ -36,8 +34,6 @@ public class SendHandleThread extends HandlerThread {
 
     public SendHandleThread(String name) {
         super(name);
-        byte[] data = new byte[256];
-        udpPacket = new DatagramPacket(data, data.length);
     }
     public void initHandler(){
         mHandler = new Handler(getLooper()){
@@ -45,7 +41,7 @@ public class SendHandleThread extends HandlerThread {
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what){
                     case SEARCH:
-                        search(8000);
+                        search();
                         break;
                 }
 
@@ -53,50 +49,38 @@ public class SendHandleThread extends HandlerThread {
         };
     }
 
-    private void search(int millSecond) {
+    private void search() {
         LogUtil.d(TAG, "search: "  );
-        mainHandler.sendEmptyMessage(TransmissionSendFragment.BEGIN_SEARCH);
+        byte[] data = new byte[256];
+        try {
+            udpSocket = new DatagramSocket(43708);
+            udpPacket = new DatagramPacket(data, data.length);
+
+        } catch (SocketException e1) {
+            e1.printStackTrace();
+        }
         while (true){
-            if (udpSocket == null){
-                try {
-                    udpSocket = new DatagramSocket(ReceiveHandlerThread.DEFAULT_PORT);
-                    udpSocket.setSoTimeout(millSecond);
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
-            }
             try {
-                LogUtil.d(TAG, "search: 开始搜索局域网可传设备"  );
+            LogUtil.d(TAG, "search: 开始搜索局域网可传设备"  );
                 udpSocket.receive(udpPacket);
-            } catch (SocketTimeoutException e) {
-               // e.printStackTrace();
-                Message msg = Message.obtain();
-                msg.what = TransmissionSendFragment.SOCKETTIMEOUT;
-                mainHandler.sendMessage(msg);
-                break;
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
-                break;
             }
             if (null != udpPacket.getAddress()) {
                 final String quest_ip = udpPacket.getAddress().toString();
-                int port = udpPacket.getPort();
-                LogUtil.d(TAG, "search: quest_ip " + quest_ip + " port : " + port);
+                LogUtil.d(TAG, "search: ");
                 Message msg = new Message();
-                msg.what = TransmissionSendFragment.RECEIVE_DATA;
+                msg.what = FastShareActivity.RECEIVE_DATA;
                 //quest_ip前面会有一个/符号，例如/192.168.0.1，这里对他进行截取，截取后就为真正的IP地址 如 192.168.0.1
                 msg.obj = quest_ip.substring(1);
                 mainHandler.sendMessage(msg);
+            }else {
+
             }
             LogUtil.d(TAG, "search: 收到" + udpPacket.getAddress());
         }
-        if (udpSocket != null){
-            udpSocket.close();
-            udpSocket.disconnect();
-            udpSocket = null;
-        }
-        mainHandler.sendEmptyMessage(TransmissionSendFragment.END_SEARCH);
-        LogUtil.e(TAG, "search: + 超时" );
+
+
     }
 
     public Handler getHandler() {

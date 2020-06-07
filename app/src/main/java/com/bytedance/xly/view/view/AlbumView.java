@@ -2,7 +2,6 @@ package com.bytedance.xly.view.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -31,14 +30,6 @@ public class AlbumView extends FrameLayout {
     private ImageView mIvPlay;
     private View mMask;
 
-    public CheckBox getCheckbox() {
-        return mCheckbox;
-    }
-
-    public ImageView getIvThumb() {
-        return mIvThumb;
-    }
-
     public AlbumView(@NonNull Context context) {
         this(context,null);
     }
@@ -49,7 +40,6 @@ public class AlbumView extends FrameLayout {
 
     public AlbumView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        LayoutInflater.from(context).inflate(R.layout.item_media, this);
         initView();
     }
 

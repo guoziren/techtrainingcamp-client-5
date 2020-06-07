@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.view.activity.FastShareActivity;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,27 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        Button button=findViewById(R.id.huaban);//这是涂鸦
+        Button button1=findViewById(R.id.bianji);//这是旋转功能的入口
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main2Activity.this,Tuya.class);//转到涂鸦的界面
+                intent.putExtra("path",currentPage);
+               intent.putExtra("array", (Serializable) picturePath);
+                startActivity(intent);
+            }
+        });
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main2Activity.this,Bianji.class);
+                intent.putExtra("path",currentPage);
+                intent.putExtra("array", (Serializable) picturePath);
+                startActivity(intent);
+            }
+        });//转到编辑的界面
+
         gd1 = new GestureDetector(this,new SimpleOnGestureListener());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
