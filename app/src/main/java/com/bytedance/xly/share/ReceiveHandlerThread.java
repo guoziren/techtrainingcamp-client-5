@@ -13,6 +13,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import androidx.annotation.NonNull;
 
@@ -25,10 +27,12 @@ import androidx.annotation.NonNull;
 public class ReceiveHandlerThread extends HandlerThread {
     private static final String TAG = "ReceiveHandlerThread";
     public static final int BROADCAST = 1;
+    private static final long INTERVALTIME = 1000;//广播间隔毫秒值
+    private static final long SENDTIMEOUT = 8000;//广播超时时间
     private Handler mHandler;
     private DatagramSocket udpSocket;
     private DatagramPacket dataPacket;
-    public static final int DEFAULT_PORT = 43708;
+    public static final int DEFAULT_PORT = 40001;
 
     private static final int MAX_DATA_PACKET_LENGTH = 40;
     private byte[] buffer = new byte[MAX_DATA_PACKET_LENGTH];
@@ -42,8 +46,8 @@ public class ReceiveHandlerThread extends HandlerThread {
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what){
                     case BROADCAST:
-                        LogUtil.d(TAG, "handleMessage: BROADCAST");
-                        broadcast();
+                        LogUtil.i(TAG, "handleMessage: BROADCAST");
+                        broadcast(SENDTIMEOUT);
                         break;
                 }
 
@@ -51,56 +55,56 @@ public class ReceiveHandlerThread extends HandlerThread {
         };
     }
 
-    private void broadcast() {
-        LogUtil.d(TAG, "broadcast: ");
+    private void broadcast(long waitTimemills) {
+        LogUtil.i(TAG, "broadcast: ");
+        long begin = System.currentTimeMillis();
+        long current = 0;
         while (true) {
+            current = System.currentTimeMillis();
+            if (current - begin >= waitTimemills) {
+                LogUtil.i(TAG, "broadcast: 超时");
+                break;
+            }
             try {
-                if(udpSocket==null){
-                    udpSocket = new DatagramSocket(null);
-                    udpSocket.setReuseAddress(true);
-                    udpSocket.bind(new InetSocketAddress(DEFAULT_PORT));
+                if (udpSocket == null ) {
+                    udpSocket = new DatagramSocket();
+//                    udpSocket.setReuseAddress(true);
                 }
                 // udpSocket = new DatagramSocket(DEFAULT_PORT);
-                dataPacket = new DatagramPacket(buffer, MAX_DATA_PACKET_LENGTH);
-                byte[] data = SystemInformationUtil.getLocalIPAddress().getBytes();
-                dataPacket.setData(data);
-                dataPacket.setLength(data.length);
-                dataPacket.setPort(DEFAULT_PORT);
-                InetAddress broadcastAddr;
-                broadcastAddr = InetAddress.getByName("255.255.255.255");
-                dataPacket.setAddress(broadcastAddr);
-            } catch (Exception e) {
+                if (dataPacket == null){
+                    dataPacket = new DatagramPacket(buffer, MAX_DATA_PACKET_LENGTH);
+                    byte[] data = SystemInformationUtil.getLocalIPAddress().getBytes();
+                    dataPacket.setData(data);
+                    dataPacket.setLength(data.length);
+
+                    dataPacket.setPort(DEFAULT_PORT);
+                    InetAddress broadcastAddr = InetAddress.getByName("255.255.255.255");
+                    dataPacket.setAddress(broadcastAddr);
+                }
+
+            } catch (SocketException e) {
                 LogUtil.e(TAG, "broadcast: e " + e.toString());
+                break;
+            } catch (UnknownHostException e) {
+                return;
             }
-            LogUtil.d(TAG, "broadcast: " + "开始广播发送udp请求");
+            LogUtil.i(TAG, "broadcast: " + "开始广播自己的ip地址");
             try {
                 udpSocket.send(dataPacket);
-                sleep(2000);
+                sleep(INTERVALTIME);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-
-
-//            udpSocket.close();
-            /**计算时间标志*/
-
-//            long et = System.currentTimeMillis();
-//            /**8秒后次线程自动销毁*/
-//            if ((et - st) > 8000) {
-//                show = true;
-//                break;
-//            }
-//            /**tcp返回值后停止发送udp*/
-//            Log.i("tag", "show");
-//            if (run) {
-//                run = false;
-//                break;
-//            }
         }
-
+        LogUtil.i(TAG, "broadcast: 关闭 断开连接");
+        if (udpSocket != null && !udpSocket.isClosed()) {
+            udpSocket.close();
+            udpSocket.disconnect();
+            udpSocket = null;
+            dataPacket = null;
+        }
     }
 
     public Handler getHandler() {

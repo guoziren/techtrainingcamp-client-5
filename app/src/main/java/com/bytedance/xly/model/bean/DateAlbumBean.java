@@ -16,6 +16,7 @@ import java.util.List;
  *
  */
 public class DateAlbumBean   {
+    public static final long day = 1000 * 60 * 60 * 24;
     private long date;
     private String dateString;
 
@@ -52,8 +53,10 @@ public class DateAlbumBean   {
     public boolean equals(Object obj) {
         if (obj instanceof DateAlbumBean) {
             DateAlbumBean ab = (DateAlbumBean) obj;
-            return this.date == ab.date;
+//            return this.date  == ab.date
+            return this.date / day == ab.date / day;
         }
         return super.equals(obj);
     }
+
 }

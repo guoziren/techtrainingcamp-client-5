@@ -2,13 +2,17 @@ package com.bytedance.xly.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
 import com.bytedance.xly.R;
 import com.bytedance.xly.view.fragment.AlbumFragment;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,14 +28,6 @@ public class PhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_album);
         super.onCreate(savedInstanceState);
-//        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary)
-//                .fitsSystemWindows(true)
-//                .statusBarDarkFont(true, 0.2f)
-//                .keyboardEnable(true) //解决软键盘与底部输入框冲突问题，默认为 false，还有一个重载方法，可以指定软键盘 mode
-//                .keyboardMode(
-//                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
-//                                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-//                ).init(); //单独指定软键盘模式
         initView();
     }
     private MenuItem chooseMenu;
@@ -45,13 +41,21 @@ public class PhotoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_choose) {
-            if (item.getTitle().equals("选择")) {
-                albumFragment.enterChoose();
-            } else {
-                albumFragment.cancelChoose();
-            }
+        switch (item.getItemId()){
+            case R.id.action_choose:
+                if (item.getTitle().equals("选择")) {
+                    albumFragment.enterChoose();
+                } else {
+                    albumFragment.cancelChoose();
+                }
+                break;
+            case R.id.action_receive:
+                Intent intent = new Intent(this,FastShareActivity.class);
+                intent.putExtra("mode","receive");
+                startActivity(intent);
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
     private AlbumFragment albumFragment;
@@ -81,5 +85,11 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
     }
 }

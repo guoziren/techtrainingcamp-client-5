@@ -1,6 +1,5 @@
 package com.bytedance.xly.adapter;
 
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -14,8 +13,8 @@ import com.bytedance.xly.R;
 import com.bytedance.xly.interfaces.IAdapterListener;
 import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.view.fragment.AlbumFragment;
+import com.bytedance.xly.view.view.AlbumView;
 
-import java.io.File;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -54,9 +53,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media,parent,false);
-        return new Holder(view);
+        // View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media,parent,false);
+       // return new Holder(view);
+        return new Holder(new AlbumView(parent.getContext()));
     }
 
     @Override
@@ -81,31 +80,16 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
         public Holder(@NonNull View itemView) {
             super(itemView);
         }
-        public void bind(AlbumBean albumBean){
-            mCheckbox = itemView.findViewById(R.id.cb_check);
-            setChooseStyle(AlbumFragment.isChooseMode);
-            //缩略图
-            mIvThumb = itemView.findViewById(R.id.iv_thumb);
-            ViewGroup.LayoutParams ivThumbLayoutParams = mIvThumb.getLayoutParams();
-            int width = (mGridLayoutManager.getWidth() - mGridLayoutManager.getPaddingLeft() - mGridLayoutManager.getPaddingRight()
-                    - 3 * space)/ mGridLayoutManager.getSpanCount();
+         public void bind(final AlbumBean albumBean){
 
-            ivThumbLayoutParams.height = width;
-            ivThumbLayoutParams.width = width;
-            mIvThumb.setLayoutParams(ivThumbLayoutParams);
+             mCheckbox = ((AlbumView)itemView).getCheckbox();
+             setChooseStyle(AlbumFragment.isChooseMode);
 
-            loadOverrideImage(albumBean.getThumbPath(),mIvThumb,width);
+             int dimension = (mGridLayoutManager.getWidth() - mGridLayoutManager.getPaddingLeft() - mGridLayoutManager.getPaddingRight()
+                     - 3 * space)/ mGridLayoutManager.getSpanCount();
+             loadOverrideImage(albumBean.getThumbPath(),((AlbumView)itemView).getIvThumb(),dimension);
 
-            //  LogUtil.d(TAG, "bind: 图片width " + ivThumbLayoutParams.width + " height " + ivThumbLayoutParams.height);
-
-            //视频缩略图,暂时不用
-            mIvPlay = itemView.findViewById(R.id.iv_play);
-
-            mMask = itemView.findViewById(R.id.v_mask);
-            mIvFlag = itemView.findViewById(R.id.ivFlag);
-
-
-            itemView.setOnClickListener(new View.OnClickListener() {
+             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (AlbumFragment.isChooseMode) {
@@ -137,7 +121,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
                 }
             });
 
-        }
+         }
+
+
          public void setChooseStyle(boolean choose) {
             mCheckbox.setVisibility(choose ? View.VISIBLE : View.GONE);
          }
@@ -153,49 +139,23 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
          }
 
     }
-    public void loadOverrideImage(String path, ImageView iv) {
-        Glide.with(iv)
-                .load(path)
-                .placeholder(R.drawable.iv_default)
-                .thumbnail(0.1f)
-                .apply(buildOptions())
-                .into(iv);
-    }
+
+
     public void loadOverrideImage(String path, ImageView iv,int size) {
         Glide.with(iv)
                 .load(path)
-              //  .thumbnail(0.1f)
+                .thumbnail(0.1f)
                 .apply(buildOptions(size))
                 .into(iv);
+         
     }
-    public void loadOverrideImage(File file, ImageView iv, int size) {
-        Glide.with(iv)
-                .load(file)
-              //  .thumbnail(0.1f)
-                .apply(buildOptions(size))
-                .into(iv);
-    }
-    public  RequestOptions buildOptions() {
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.override(100, 100)
-//        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-//        requestOptions.error(R.drawable.ic_album);
 
-        return requestOptions;
-    }
     public  RequestOptions buildOptions(int size) {
         RequestOptions requestOptions = new RequestOptions()
         .override(size, size)
 //        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
         .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-               // .placeholder(R.drawable.iv_default);
         return requestOptions;
     }
-    public void loadImage(String path, ImageView iv) {
-        Glide.with(iv)
-                .load(path)
-                .thumbnail(0.1f)
-                .into(iv);
-    }
+
 }

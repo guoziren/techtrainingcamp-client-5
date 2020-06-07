@@ -70,7 +70,6 @@ public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Hold
     }
 
     class Holder extends RecyclerView.ViewHolder{
-        AlbumAdapter mAlbumAdapter;
         public Holder(@NonNull View itemView) {
             super(itemView);
         }
@@ -87,7 +86,7 @@ public class DateAlbumAdapter extends RecyclerView.Adapter<DateAlbumAdapter.Hold
             int space = UITool.dip2px(mContext,2);
             //外层recyclerview滑动时，嵌套的recyclerview会多次addItemDecoration导致间隙会逐渐变大
             if (recyclerView.getItemDecorationCount() == 0) {
-                recyclerView.addItemDecoration(new GridDecoration(4,space,false));
+                recyclerView.addItemDecoration(new GridDecoration(4,space,true ));
             }
 
             AlbumAdapter albumAdapter = new AlbumAdapter(dateAlbumBean.getItemList(),gridLayoutManager);
