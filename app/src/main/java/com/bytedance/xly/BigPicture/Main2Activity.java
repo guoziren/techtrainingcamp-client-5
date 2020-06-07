@@ -2,11 +2,13 @@ package com.bytedance.xly.BigPicture;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -14,6 +16,7 @@ import android.widget.RelativeLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
@@ -31,7 +34,8 @@ public class Main2Activity extends AppCompatActivity {
     private GestureDetector gd1;//手势
     private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 1;
     private Button mBtn_share;
-
+    private ScaleView[] mScaleViews;
+    private ScalePagerAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,39 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
+    private class ScalePagerAdapter extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            return picturePath.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+//          if (object instanceof ScaleView) {
+//              ScaleView scaleView = (ScaleView) object;
+//              container.removeView(scaleView);
+//          }
+            container.removeView(mScaleViews[position]);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            ScaleView scaleView = new ScaleView(getApplicationContext());
+            scaleView.setImageURI(Uri.parse(picturePath.get(position).getPath()));
+
+            mScaleViews[position] = scaleView;
+            container.addView(scaleView);
+            return scaleView;
+        }
+
+    }
     private void initEvent() {
         mBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,11 +102,11 @@ public class Main2Activity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        gd1.onTouchEvent(ev);
-        return super.dispatchTouchEvent(ev);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        gd1.onTouchEvent(ev);
+//        return super.dispatchTouchEvent(ev);
+//    }
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         Intent intent = getIntent();
@@ -77,33 +114,36 @@ public class Main2Activity extends AppCompatActivity {
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
         mBtn_share = findViewById(R.id.share);
-
-        ViewPage.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-            RelativeLayout layout = findViewById(R.id.layout);
-            if(event.getAction()==MotionEvent.ACTION_UP){
-                if(layout.getVisibility()== View.VISIBLE){
-                    layout.setVisibility(View.INVISIBLE);
-                }else {
-                    layout.setVisibility(View.VISIBLE);
-                }
-            }
-                return false;
-            }
-        });
-        ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-
-            public Fragment getItem(int i) {
-                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
-            }
-
-            @Override
-            public int getCount() {
-                return Main2Activity.this.picturePath.size();
-            }
-        });
-        ViewPage.setCurrentItem(currentPage);
+//
+//        ViewPage.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//            RelativeLayout layout = findViewById(R.id.layout);
+//            if(event.getAction()==MotionEvent.ACTION_UP){
+//                if(layout.getVisibility()== View.VISIBLE){
+//                    layout.setVisibility(View.INVISIBLE);
+//                }else {
+//                    layout.setVisibility(View.VISIBLE);
+//                }
+//            }
+//                return false;
+//            }
+//        });
+//        ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+//
+//            public Fragment getItem(int i) {
+//                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return Main2Activity.this.picturePath.size();
+//            }
+//        });
+//        ViewPage.setCurrentItem(currentPage);
+        mScaleViews = new ScaleView[picturePath.size()];
+        mAdapter = new ScalePagerAdapter();
+        ViewPage.setAdapter(mAdapter);
     }
 
     class SimpleOnGestureListener extends GestureDetector.SimpleOnGestureListener {
