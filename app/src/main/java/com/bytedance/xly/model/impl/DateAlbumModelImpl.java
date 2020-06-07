@@ -110,6 +110,7 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                             mData.add(datealbumbean);
                         }
                         before = date;
+                        //日期不一样的时候之前一天的存入mData,并new DateAlbumBean
                         datealbumbean = new DateAlbumBean();
                         datealbumbean.setDate(date);
                         datealbumbean.getItemList().add(albumBean);
@@ -118,6 +119,7 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                     }
                 }
             }
+            mData.add(datealbumbean);
             sortList(mData);
             return mData;
         }
