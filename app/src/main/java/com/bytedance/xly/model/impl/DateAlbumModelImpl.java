@@ -135,6 +135,7 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                 // Log.d(TAG, "getSystemPhotoList: path = " + path);
                 File file = new File(path);
                 if (file.exists()) {
+<<<<<<< HEAD
 //                    AlbumBean albumBean = convertFileToAlbumBean(file);
                     AlbumBean albumBean = convertFileToAlbumBean(path,data_thumbnails,data_taken);
                     DateAlbumBean DateAlbumBean = new DateAlbumBean();
@@ -149,6 +150,41 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                 }
             }
            long mid = System.currentTimeMillis();
+=======
+                    AlbumBean albumBean = new AlbumBean();
+                    albumBean.setThumbPath(data_thumbnails);
+                    if (data_taken == null){
+                        continue;
+                    }
+
+                    long date = Long.parseLong(data_taken);
+                    albumBean.setDate(date);
+                    albumBean.setPath(path);
+//                    DateAlbumBean datealbumbean = new DateAlbumBean();
+//                    datealbumbean.setDate(albumBean.getDate());
+//                    int index1 = mData.indexOf(datealbumbean);
+//                    if (index1 >= 0) {
+//                        mData.get(index1).getItemList().add(albumBean);
+//                    } else {
+//                        datealbumbean.getItemList().add(albumBean);
+//                        mData.add(datealbumbean);
+//                    }
+                    if (date / DateAlbumBean.day != before / DateAlbumBean.day){
+                        if (before != -1){
+                            mData.add(datealbumbean);
+                        }
+                        before = date;
+                        //日期不一样的时候之前一天的存入mData,并new DateAlbumBean
+                        datealbumbean = new DateAlbumBean();
+                        datealbumbean.setDate(date);
+                        datealbumbean.getItemList().add(albumBean);
+                    }else{
+                       datealbumbean.getItemList().add(albumBean);
+                    }
+                }
+            }
+            mData.add(datealbumbean);
+>>>>>>> ad2b7fdffd0f1f004f67e13a651faffad087c843
             sortList(mData);
           long end = System.currentTimeMillis();
            LogUtil.e(TAG, "doInBackground: 读取数据ms " + (mid - begin) );
