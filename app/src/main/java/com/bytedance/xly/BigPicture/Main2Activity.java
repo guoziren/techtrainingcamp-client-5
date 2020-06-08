@@ -2,6 +2,7 @@ package com.bytedance.xly.BigPicture;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+//<<<<<<< HEAD
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,21 +11,37 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+//=======
+//import android.os.Build;
+//import android.os.Bundle;
+//import android.view.GestureDetector;
+//import android.view.MotionEvent;
+//import android.view.View;
+//>>>>>>> master
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+//<<<<<<< HEAD
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
+//=======
+//import androidx.appcompat.app.AppCompatActivity;
+//import androidx.fragment.app.Fragment;
+//import androidx.fragment.app.FragmentStatePagerAdapter;
+//>>>>>>> master
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
 import com.bytedance.xly.model.bean.AlbumBean;
 import com.bytedance.xly.view.activity.FastShareActivity;
 
+
+
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +53,41 @@ public class Main2Activity extends AppCompatActivity {
     private GestureDetector gd1;//手势
     private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 1;
     private Button mBtn_share;
+//<<<<<<< HEAD
     private ScaleView[] mScaleViews;
     private ScalePagerAdapter mAdapter;
     private static final String TAG = "Main2Activity";
     private boolean isFirst=true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
         //gd1 = new GestureDetector(this,new SimpleOnGestureListener());
+
+        Button button=findViewById(R.id.huaban);//这是涂鸦
+        Button button1=findViewById(R.id.bianji);//这是旋转功能的入口
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main2Activity.this,Tuya.class);//转到涂鸦的界面
+                intent.putExtra("path",currentPage);
+                intent.putExtra("array", (Serializable) picturePath);
+                startActivity(intent);
+            }
+        });
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main2Activity.this,Bianji.class);
+                intent.putExtra("path",currentPage);
+                intent.putExtra("array", (Serializable) picturePath);
+                startActivity(intent);
+            }
+        });//转到编辑的界面
+        gd1 = new GestureDetector(this,new SimpleOnGestureListener());
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -99,6 +142,7 @@ public class Main2Activity extends AppCompatActivity {
         }
 
     }
+
     private void initEvent() {
         mBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,11 +157,19 @@ public class Main2Activity extends AppCompatActivity {
         });
     }
 
+//<<<<<<< HEAD
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
 //        gd1.onTouchEvent(ev);
 //        return super.dispatchTouchEvent(ev);
 //    }
+//=======
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        gd1.onTouchEvent(ev);
+//        return super.dispatchTouchEvent(ev);
+//    }
+//>>>>>>> master
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         Intent intent = getIntent();
@@ -125,6 +177,7 @@ public class Main2Activity extends AppCompatActivity {
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
         mBtn_share = findViewById(R.id.share);
+//<<<<<<< HEAD
 //
 //        ViewPage.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -156,6 +209,34 @@ public class Main2Activity extends AppCompatActivity {
         mAdapter = new ScalePagerAdapter();
 
         ViewPage.setAdapter(mAdapter);
+//=======
+//
+//        ViewPage.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//            RelativeLayout layout = findViewById(R.id.layout);
+//            if(event.getAction()==MotionEvent.ACTION_UP){
+//                if(layout.getVisibility()== View.VISIBLE){
+//                    layout.setVisibility(View.INVISIBLE);
+//                }else {
+//                    layout.setVisibility(View.VISIBLE);
+//                }
+//            }
+//                return false;
+//            }
+//        });
+//        ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+//
+//            public Fragment getItem(int i) {
+//                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return Main2Activity.this.picturePath.size();
+//            }
+//        });
+//>>>>>>> master
         ViewPage.setCurrentItem(currentPage);
     }
 
