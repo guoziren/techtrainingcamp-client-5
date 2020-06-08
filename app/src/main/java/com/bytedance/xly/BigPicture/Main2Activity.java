@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -36,11 +38,13 @@ public class Main2Activity extends AppCompatActivity {
     private Button mBtn_share;
     private ScaleView[] mScaleViews;
     private ScalePagerAdapter mAdapter;
+    private static final String TAG = "Main2Activity";
+    private boolean isFirst=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-        gd1 = new GestureDetector(this,new SimpleOnGestureListener());
+        //gd1 = new GestureDetector(this,new SimpleOnGestureListener());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -59,6 +63,7 @@ public class Main2Activity extends AppCompatActivity {
 
         @Override
         public int getCount() {
+            //Log.d(TAG, "getCount: "+picturePath.size());
             return picturePath.size();
         }
 
@@ -73,15 +78,21 @@ public class Main2Activity extends AppCompatActivity {
 //              ScaleView scaleView = (ScaleView) object;
 //              container.removeView(scaleView);
 //          }
+            Log.d(TAG, "destroyItem: ");
             container.removeView(mScaleViews[position]);
+        }
+
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.setPrimaryItem(container, currentPage, object);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
             ScaleView scaleView = new ScaleView(getApplicationContext());
+            Log.d(TAG, "instantiateItem: "+currentPage+" position:"+position);
             scaleView.setImageURI(Uri.parse(picturePath.get(position).getPath()));
-
             mScaleViews[position] = scaleView;
             container.addView(scaleView);
             return scaleView;
@@ -143,7 +154,9 @@ public class Main2Activity extends AppCompatActivity {
 //        ViewPage.setCurrentItem(currentPage);
         mScaleViews = new ScaleView[picturePath.size()];
         mAdapter = new ScalePagerAdapter();
+
         ViewPage.setAdapter(mAdapter);
+        ViewPage.setCurrentItem(currentPage);
     }
 
     class SimpleOnGestureListener extends GestureDetector.SimpleOnGestureListener {
