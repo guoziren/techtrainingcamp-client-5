@@ -10,6 +10,7 @@
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/ViewPage"
+        android:background="@android:color/black"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 
@@ -23,8 +24,8 @@
             android:layout_height="80dp"
             android:id="@+id/text"
             android:text="未来填写时间的"
-            android:textColor="#FB0101"
-            android:background="#ffffff"/>
+            android:textColor="#eeeeee"
+            android:background="#000000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,10 +37,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
-                android:background="#ffffff"
+                android:background="#000000"
                 android:layout_weight="0.5"
                 android:scaleType="center"
-                android:textColor="#FA0808"
+                android:textColor="#ffffff"
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button1"/>
 
@@ -47,10 +48,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
-                android:background="#ffffff"
+                android:background="#000000"
                 android:layout_weight="0.5"
                 android:scaleType="center"
-                android:textColor="#FA0808"
+                android:textColor="#ffffff"
                 style="?android:attr/buttonBarButtonStyle"
                 android:text="@string/button2"/>
 
@@ -59,7 +60,7 @@
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
                 android:scaleType="center"
-                android:background="#ffffff"
+                android:background="#000000"
                 android:layout_weight="0.5"
                 android:text="@string/button3"
                 style="?android:attr/buttonBarButtonStyle"
@@ -70,7 +71,7 @@
                 android:layout_height="match_parent"
                 tools:ignore="Suspicious0dp"
                 android:scaleType="center"
-                android:background="#ffffff"
+                android:background="#000000"
                 android:layout_weight="0.5"
                 android:text="分享"
                 style="?android:attr/buttonBarButtonStyle"
