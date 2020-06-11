@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">PhotoAlbum</string>
+    <string name="app_name">图片查看器</string>
+    <string name="button1">编辑</string>
+    <string name="button2">裁剪</string>
+    <string name="button3">画板</string>
 </resources>

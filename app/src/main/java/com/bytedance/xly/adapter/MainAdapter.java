@@ -1,6 +1,7 @@
 package com.bytedance.xly.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bytedance.xly.BigPicture.Main2Activity;
 import com.bytedance.xly.R;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -34,7 +37,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.Holder> {
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_home_page,parent,false);
-        return new Holder(view);
+        final Holder holder = new Holder(view);
+        //我修改的地方，用到lambda表达式，得用JDK8。
+        holder.imageView1.setOnClickListener((v)->{actviteMain2(holder.getAdapterPosition() * 4);});
+        holder.imageView2.setOnClickListener((v)->{actviteMain2(holder.getAdapterPosition() * 4 + 1);});
+        holder.imageView3.setOnClickListener((v)->{actviteMain2(holder.getAdapterPosition() * 4 + 2);});
+        holder.imageView4.setOnClickListener((v)->{actviteMain2(holder.getAdapterPosition() * 4 + 3);});
+        return holder;
+    }
+    private void actviteMain2(int position_num){
+        Intent intent = new Intent(mContext, Main2Activity.class);
+        intent.putStringArrayListExtra("picturePath", (ArrayList<String>) mStrings);
+        intent.putExtra("CurrentPage",position_num);
+        mContext.startActivity(intent);//去激活Main2Activity
     }
 
     @Override
