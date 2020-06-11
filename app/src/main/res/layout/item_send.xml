@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+    android:background="@drawable/shape_ip"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:textColor="#000000"
+        android:text="192.168.0.1"
+        android:textSize="22sp" >
+
+</TextView>
