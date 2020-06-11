@@ -13,13 +13,16 @@
             android:name=".view.activity.FastShareActivity"
             android:theme="@style/AppTheme">
         </activity>
+        <activity android:name=".BigPicture.Bianji"/>
+        <activity android:name=".BigPicture.Tuya"/>
         <activity
             android:name=".BigPicture.Main2Activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".view.activity.MainActivity">
 
         </activity>
-        <activity android:name=".view.activity.PhotoActivity">
+        <activity android:name=".view.activity.PhotoActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
