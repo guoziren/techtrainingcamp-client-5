@@ -1,14 +1,14 @@
-package com.bytedance.xly.adapter;
+package com.bytedance.xly.filetransfer.adapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bytedance.xly.R;
-import com.bytedance.xly.view.fragment.TransmissionSendFragment.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,8 @@ import java.util.List;
 public class TransmissionSendAdapter extends RecyclerView.Adapter<TransmissionSendAdapter.ViewHolder> {
 
     private final List<String> mValues = new ArrayList<>();
-    private final OnListFragmentInteractionListener mListener;
 
-    public TransmissionSendAdapter(OnListFragmentInteractionListener listener) {
 
-        mListener = listener;
-    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -37,17 +33,12 @@ public class TransmissionSendAdapter extends RecyclerView.Adapter<TransmissionSe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position));
+        holder.mIP.setText(mValues.get(position));
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mIP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+                mOnItemClickListener.onItemClick(mValues.get(position));
             }
         });
     }
@@ -62,19 +53,27 @@ public class TransmissionSendAdapter extends RecyclerView.Adapter<TransmissionSe
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mContentView;
-        public String mItem;
+        public  TextView mIP;
+        public ImageView mImageView;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mContentView = (TextView) view.findViewById(R.id.textView2);
+            mIP =  view.findViewById(R.id.ip);
+            mImageView =  view.findViewById(R.id.touxiang);
         }
 
         @Override
         public java.lang.String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mIP.getText() + "'";
         }
+    }
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(String ip);
     }
 }

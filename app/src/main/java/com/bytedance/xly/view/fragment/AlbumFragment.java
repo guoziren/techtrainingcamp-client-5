@@ -12,6 +12,10 @@ import android.widget.Toast;
 import com.bytedance.xly.BigPicture.Main2Activity;
 import com.bytedance.xly.R;
 import com.bytedance.xly.adapter.DateAlbumAdapter;
+import com.bytedance.xly.filetransfer.model.FileSender;
+import com.bytedance.xly.filetransfer.model.entity.FileInfo;
+import com.bytedance.xly.util.TransferUtil;
+import com.bytedance.xly.filetransfer.view.SenderActivity;
 import com.bytedance.xly.interfaces.IAdapterListener;
 import com.bytedance.xly.interfaces.IDateAlbumListener;
 import com.bytedance.xly.model.bean.AlbumBean;
@@ -19,11 +23,11 @@ import com.bytedance.xly.model.bean.DateAlbumBean;
 import com.bytedance.xly.presenter.impl.AlbumPresenterImpl;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.ToastUtil;
-import com.bytedance.xly.view.activity.FastShareActivity;
 import com.bytedance.xly.view.activity.PhotoActivity;
 import com.bytedance.xly.view.view.AlbumBottomMenu;
 import com.bytedance.xly.view.view.IDateAlbumViewCallback;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +92,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
             @Override
             public void onShareClick() {
-                Intent intent = new Intent(getActivity(), FastShareActivity.class);
+                Intent intent = new Intent(getActivity(), SenderActivity.class);
                 ArrayList<String> paths = new ArrayList<>();
                 if (choosedCache.size() == 0){
                     ToastUtil.showToast(getActivity(), Toast.LENGTH_LONG,"尚未选择图片");
@@ -99,6 +103,8 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
                         paths.add(albumBean.getPath());
                     }
                 }
+                createFileInfo(choosedCache);
+
                 intent.putStringArrayListExtra(PATHS,paths);
                 startActivity(intent);
             }
@@ -106,10 +112,21 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
     }
 
+    private void createFileInfo(List<DateAlbumBean> choosedCache) {
+        for (DateAlbumBean dateAlbumBean : choosedCache) {
+            for (AlbumBean albumBean : dateAlbumBean.getItemList()) {
+                FileInfo f = new FileInfo();
+                f.setFilePath(albumBean.getPath());
+                File file = new File(albumBean.getPath());
+                f.setSize(file.length());
+                f.setName(f.getName());
+                f.setFileType(FileSender.TYPE_FILE);
 
-
-
-
+                TransferUtil.getInstance().addFileInfo(f);
+//                AppContext.getAppContext().addFileInfo(f);
+            }
+        }
+    }
 
 
     /**

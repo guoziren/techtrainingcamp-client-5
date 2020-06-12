@@ -24,7 +24,7 @@ public class LogUtil {
 
     public static void d(String TAG, String content) {
         if (!sIsRelease) {
-            Log.d("[" + sTAG + "]" + TAG, content);
+            Log.e("[" + sTAG + "]" + TAG, content);
         }
     }
 

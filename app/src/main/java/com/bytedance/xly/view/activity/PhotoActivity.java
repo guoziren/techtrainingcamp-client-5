@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 
 import com.bytedance.xly.R;
+import com.bytedance.xly.filetransfer.view.ReceicerActivity;
 import com.bytedance.xly.view.fragment.AlbumFragment;
 
 import androidx.annotation.NonNull;
@@ -50,8 +51,8 @@ public class PhotoActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.action_receive:
-                Intent intent = new Intent(this,FastShareActivity.class);
-                intent.putExtra("mode","receive");
+                Intent intent = new Intent(this, ReceicerActivity.class);
+//                intent.putExtra("mode","receive");
                 startActivity(intent);
                 break;
         }

@@ -60,16 +60,7 @@
                 android:layout_weight="0.5"
                 tools:ignore="Suspicious0dp"/>
 
-            <Button
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:id="@+id/share"
-                android:background="#ffffff"
-                android:textColor="#5CA4C5"
-                android:text="分享" style="?android:attr/buttonBarButtonStyle"
-                android:scaleType="center"
-                android:layout_weight="0.5"
-                tools:ignore="Suspicious0dp"/>
+
 
 
         </LinearLayout>
