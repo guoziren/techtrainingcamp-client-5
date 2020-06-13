@@ -31,28 +31,18 @@ public class PhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initView();
     }
-    private MenuItem chooseMenu;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        chooseMenu = menu.findItem(R.id.action_choose);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_choose:
-                if (item.getTitle().equals("选择")) {
-                    albumFragment.enterChoose();
-                } else {
-                    albumFragment.cancelChoose();
-                }
-                break;
             case R.id.action_receive:
                 Intent intent = new Intent(this, ReceicerActivity.class);
-//                intent.putExtra("mode","receive");
                 startActivity(intent);
                 break;
         }
@@ -65,7 +55,6 @@ public class PhotoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         albumFragment = (AlbumFragment) getSupportFragmentManager().findFragmentByTag("album");
         if (albumFragment == null) {
-//            albumFragment = new MyAlbumFragment();
             albumFragment = new com.bytedance.xly.view.fragment.AlbumFragment();
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -74,7 +63,7 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     public void onChooseModeChange(boolean isChoose) {
-        chooseMenu.setTitle(isChoose ? "取消" : "选择");
+//        chooseMenu.setTitle(isChoose ? "取消" : "选择");
 
     }
 
@@ -88,9 +77,15 @@ public class PhotoActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * 监听主页返回键
+     */
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
+        if (albumFragment.isChooseMode){
+            albumFragment.cancelChoose();
+        }else{
+            super.onBackPressed();
+        }
     }
 }
