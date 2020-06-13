@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/shape_ip"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
-    <TextView
-        android:id="@+id/ip"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@drawable/shape_ip"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="192.168.0.1"
-        android:textColor="#000000"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/touxiang"
-        tools:layout_editor_absoluteY="0dp">
 
-    </TextView>
 
     <ImageView
         android:id="@+id/touxiang"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+
         app:srcCompat="@drawable/touxiang" />
 
+    <TextView
+        android:id="@+id/ip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="192.168.0.1"
+        android:textColor="#444444"
+        android:textSize="22sp"
+      >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </TextView>
+</LinearLayout>

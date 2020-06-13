@@ -38,6 +38,11 @@ public class SenderUDP implements ISenderUDP {
 
     }
 
+    /**
+     * 持续搜索接收方的开关,默认true表示是开的
+     */
+    private boolean SEARCH_SWITCH = true;
+
     private Runnable getSearchRunnable() {
         if (mRunnable != null){
             return mRunnable;
@@ -46,7 +51,7 @@ public class SenderUDP implements ISenderUDP {
             @Override
             public void run() {
                 LogUtil.d(TAG, "getSearchRunnable  run: ");
-                while (true){
+                while (SEARCH_SWITCH){
                     if (udpSocket == null){
                         try {
                             //创建socket
@@ -90,6 +95,15 @@ public class SenderUDP implements ISenderUDP {
         };
         return mRunnable;
     }
+
+    public boolean isSearchSwitch() {
+        return SEARCH_SWITCH;
+    }
+
+    public void setSearchSwitch(boolean searchSwitch) {
+        this.SEARCH_SWITCH = SEARCH_SWITCH;
+    }
+
     private SenderSearchListener mSenderSearchListener;
 
     public SenderSearchListener getSenderSearchListener() {

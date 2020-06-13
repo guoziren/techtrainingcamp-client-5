@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,8 @@ import com.bytedance.xly.R;
 import com.bytedance.xly.filetransfer.IReceiverViewCallback;
 import com.bytedance.xly.filetransfer.presenter.ReceiverPresenter;
 import com.bytedance.xly.util.LogUtil;
+import com.bytedance.xly.util.SystemInformationUtil;
+import com.bytedance.xly.view.view.RadarScanView;
 
 public class ReceicerActivity extends AppCompatActivity implements IReceiverViewCallback {
     private static final String TAG = "ReceicerActivity";
@@ -30,6 +33,7 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
             switch (msg.what){
                 case TIMEOUT:
                     mTvTop.setClickable(true);
+                    mRadarView.stopScan();
                     mTvTop.setText("继续等待");
                     break;
                 case MSG_TO_FILE_RECEIVER_UI:
@@ -42,6 +46,8 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
             }
         }
     };
+    private Toolbar mToolbar;
+    private RadarScanView mRadarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +62,36 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
             @Override
             public void onClick(View v) {
                 mReceiverPresenter.waitSender();
+                mRadarView.startScan();
                 mTvTop.setClickable(false);
                 mTvTop.setText("正在等待发送方");
+            }
+        });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
 
     private void init() {
-        Toolbar toolbar = findViewById(R.id.topbar);
-        toolbar.setTitle("局域网快传");
+        //toolbar
+        mToolbar = findViewById(R.id.topbar);
+        mToolbar.setTitle("局域网快传-接收方");
+        mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setSupportActionBar(toolbar);
         mTvTop = findViewById(R.id.tv_top_tip);
+
+        TextView tv_ip = findViewById(R.id.tv_ip);
+        tv_ip.setText("本机IP地址:" + SystemInformationUtil.getIpAddress(this));
+
+        mRadarView = findViewById(R.id.radarView);
+        mRadarView.startScan();
+
         mReceiverPresenter = new ReceiverPresenter(this);
         //广播ip
         mReceiverPresenter.waitSender();

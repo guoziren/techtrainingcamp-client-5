@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,7 +52,9 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
                     mAdapter.setDataAndNotify(mIPList);
                     break;
                 case SEARCH_TIMEOUT:
-                    mBtnWait.setVisibility(View.VISIBLE);
+                    mRadarScanView.stopScan();
+                    mBtnWait.setClickable(true);
+                    mBtnWait.setTextColor(Color.parseColor("#aaaaaa"));
                     break;
                 case START_FILE_TRANSFER_ACTIVITY:
                     Intent intent = new Intent(SenderActivity.this, FileSenderActivity.class);
@@ -64,6 +67,7 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
         }
     };
     private String mServerIp;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +81,9 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
         mBtnWait.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBtnWait.setVisibility(View.GONE);
+                mBtnWait.setClickable(false);
+                mBtnWait.setTextColor(Color.parseColor("#eeeeee"));
+                mRadarScanView.startScan();
                 mSenderPresenter.search();
 
             }
@@ -90,12 +96,22 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
                 mSenderPresenter.notifyReceiverToPrepareTransfer(ip);
             }
         });
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSenderPresenter != null){
+                    mSenderPresenter.finish();
+                }
+                finish();
+            }
+        });
     }
 
     private void init() {
-        Toolbar toolbar = findViewById(R.id.topbar);
-        toolbar.setTitle("局域网快传");
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.topbar);
+        mToolbar.setTitle("局域网快传-发送方");
+        mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //雷达
@@ -109,8 +125,8 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
         }
 
         mBtnWait = findViewById(R.id.btn_wait);
-        mBtnWait.setVisibility(View.GONE);
-
+        mBtnWait.setTextColor(Color.parseColor("#eeeeee"));
+        mBtnWait.setClickable(false);
 
         RecyclerView recyclerView = findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -158,5 +174,12 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mSenderPresenter.finish();
+        finish();
     }
 }

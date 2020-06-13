@@ -111,7 +111,7 @@ public class RadarScanView extends View {
         canvas.drawCircle(centerX, centerY, centerX, mCirclePaint);
     }
 
-
+    private boolean swicth = true;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -120,7 +120,9 @@ public class RadarScanView extends View {
                 if(mSweep > 360) mSweep = 0;
                 postInvalidate();
 //                sendEmptyMessage(MSG_RUN);
-                sendEmptyMessageDelayed(MSG_RUN, 50);
+                if (swicth){
+                    sendEmptyMessageDelayed(MSG_RUN, 50);
+                }
             }
         }
     };
@@ -130,6 +132,13 @@ public class RadarScanView extends View {
      */
     public void startScan(){
         if(mHandler != null){
+            swicth = true;
+            mHandler.obtainMessage(MSG_RUN).sendToTarget();
+        }
+    }
+    public void stopScan(){
+        if(mHandler != null){
+            swicth = false;
             mHandler.obtainMessage(MSG_RUN).sendToTarget();
         }
     }

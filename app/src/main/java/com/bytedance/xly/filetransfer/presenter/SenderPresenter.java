@@ -25,6 +25,7 @@ public class SenderPresenter implements ISenderPresenter {
 
     @Override
     public void search() {
+        mSenderUDP.setSearchSwitch(true);
         mSenderUDP.searchReceiver(new SenderUDP.SenderSearchListener() {
             @Override
             public void onFindReceiverSuccess(List<String> ip) {
@@ -58,4 +59,8 @@ public class SenderPresenter implements ISenderPresenter {
         });
     }
 
+    public void finish() {
+        //结束搜索任务
+        mSenderUDP.setSearchSwitch(false);
+    }
 }
