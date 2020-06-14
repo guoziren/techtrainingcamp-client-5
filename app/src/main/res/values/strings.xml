@@ -1,3 +1,55 @@
 <resources>
-    <string name="app_name">PhotoAlbum</string>
+    <string name="app_name">图片查看器</string>
+    <string name="button1">编辑</string>
+    <string name="button2">裁剪</string>
+    <string name="button3">画板</string>
+
+    <string name="tip_loading">正在加载中</string>
+
+
+
+
+    <string name="str_0">0</string>
+    <string name="str_searching">正在搜索</string>
+    <string name="str_search_go_on">继续搜索</string>
+    <string name="str_name">名称</string>
+    <string name="str_title">标题</string>
+    <string name="str_has_selected">已选（0）</string>
+    <string name="tip_waiting_file_sender_connect">正在等待发送者连接...</string>
+    <string name="str_device_name">设备名称</string>
+    <string name="str_mac">MAC地址</string>
+    <string name="str_transfer_progress">传输过程</string>
+    <string name="str_cancel">取消</string>
+    <string name="title_file_sender">文件发送</string>
+    <string name="str_has_selected_detail">已选（%d）</string>
+    <string name="tip_please_select_your_file">请选择你要传输的文件</string>
+    <string name="title_file_transfer">传送门</string>
+
+    <string name="str_selected_file_info_detail">{count}个文件共{size}</string>
+    <string name="str_selected_file_info_detail_default">0个文件共0K</string>
+
+    <string name="tip_is_waitting_connect">正在等待连接...</string>
+
+
+
+
+
+    <string name="tip_call_back_agin_and_exist">再按一次就退出 {appName} </string>
+    <string name="str_unit_mb">MB</string>
+    <string name="str_has_send">已传</string>
+    <string name="str_has_time">用时</string>
+    <string name="str_second">秒</string>
+
+
+
+
+    <string name="tip_permission_denied">权限被拒绝</string>
+    <string name="tip_permission_denied_and_not_get_file_info_list">权限被拒绝，无法获取文件列表</string>
+    <string name="tip_permission_denied_and_not_receive_file">权限被拒绝，无法接收文件</string>
+    <string name="tip_permission_denied_and_not_send_file">权限被拒绝，无法发送文件文件</string>
+    <string name="tip_permission_denied_and_not_modify_ap_info">权限被拒绝，无法修改热点信息</string>
+
+    <string name="tip_permission_denied_and_not_get_wifi_info_list">权限拒绝，无法获取附近的网络列表</string>
+
+
 </resources>
