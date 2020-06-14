@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /*
  * 包名：      com.bytedance.xly.filetransfer.model
@@ -34,6 +36,8 @@ public class SenderUDP implements ISenderUDP {
     public void searchReceiver(SenderSearchListener receiveIPListene) {
         setSenderSearchListener(receiveIPListene);
         Runnable searchRunnable = getSearchRunnable();
+        ThreadPoolExecutor threadPoolExecutor  = (ThreadPoolExecutor)TransferUtil.getInstance().getExecutorService();
+        LogUtil.d(TAG, "searchReceiver: " + threadPoolExecutor);
         TransferUtil.getInstance().getExecutorService().execute(searchRunnable);
 
     }
@@ -55,8 +59,14 @@ public class SenderUDP implements ISenderUDP {
                     if (udpSocket == null){
                         try {
                             //创建socket
-                            udpSocket = new DatagramSocket(TransferUtil.DEFAULT_SERVER_BROADCAST_PORT);
+//                            LogUtil.d(TAG, "创建前udpSocket:  是否绑定" + udpSocket.isBound()  + "   是否关闭" + udpSocket.isClosed() +"  是否连接"+udpSocket.isConnected() );
+                            udpSocket = new DatagramSocket(null);
+                            LogUtil.d(TAG, "创建后udpSocket:  是否绑定" + udpSocket.isBound()  + "   是否关闭" + udpSocket.isClosed() +"  是否连接"+udpSocket.isConnected() );
+//                            LogUtil.d(TAG, "udpSocket:  getInetAddress" + udpSocket.getInetAddress()  + "   getLocalAddress" + udpSocket.getLocalPort() +"  是否连接"+udpSocket.getLocalPort() +  "  getPort" + udpSocket.getPort()   );
+                            udpSocket.setReuseAddress(true);
+                            udpSocket.bind(new InetSocketAddress(TransferUtil.DEFAULT_SERVER_BROADCAST_PORT));
                             udpSocket.setSoTimeout(SOCKETTIMEOUT);
+
                         } catch (SocketException e) {
                             mSenderSearchListener.onError(e);
                             e.printStackTrace();
@@ -69,12 +79,21 @@ public class SenderUDP implements ISenderUDP {
                     try {
                         LogUtil.d(TAG, "search: 开始搜索局域网可传设备 监听端口号 "  + TransferUtil.DEFAULT_SERVER_COM_PORT);
                         //阻塞接收
+                        LogUtil.d(TAG, "udpSocket:  是否绑定" + udpSocket.isBound()  + "   是否关闭" + udpSocket.isClosed() +"  是否连接"+udpSocket.isConnected());
                         udpSocket.receive(udpPacket);
                     } catch (SocketTimeoutException e) {
-                      mSenderSearchListener.onTimeout();
+                        LogUtil.d(TAG, "run: SocketTimeoutException");
+                        mSenderSearchListener.onTimeout();
+                        break;
+                    }catch (SocketException e){
+                        LogUtil.d(TAG, "run: SocketException");
+                        e.printStackTrace();
+                        mSenderSearchListener.onError(e);
                         break;
                     }catch (IOException e) {
+                        LogUtil.d(TAG, "run: IOException");
                         e.printStackTrace();
+                        mSenderSearchListener.onError(e);
                         break;
                     }
                     if (null != udpPacket.getAddress()) {
@@ -88,8 +107,7 @@ public class SenderUDP implements ISenderUDP {
                         }
                     }
                     LogUtil.d(TAG, "search: 收到" + udpPacket.getAddress());
-                }
-                closeSocket();
+                }//while loop end
                 LogUtil.d(TAG, "run: runnable is over");
             }
         };
@@ -212,7 +230,7 @@ public class SenderUDP implements ISenderUDP {
     private void sendFileInfoListToFileReceiverWithUdp(int serverPort, InetAddress ipAddress) throws IOException {
         //1.1将发送的List<FileInfo> 发送给 文件接收方
 
-        List<FileInfo> fileInfoList = TransferUtil.getInstance().getFileInfos();
+        List<FileInfo> fileInfoList = TransferUtil.getInstance().getSendFileInfos();
         //
         for(FileInfo  fileInfo: fileInfoList){
             String fileInfoStr = FileInfo.toJsonStr(fileInfo);
@@ -242,11 +260,13 @@ public class SenderUDP implements ISenderUDP {
         void onConnectedWithReceiver();
 
     }
-    private void closeSocket(){
-        if (udpSocket != null){
+    public void closeSocket(){
+        LogUtil.d(TAG, "closeSocket: ");
+        if (udpSocket != null && !udpSocket.isClosed()){
             udpSocket.close();
-            udpSocket.disconnect();
+//            udpSocket.disconnect();
             udpSocket = null;
+
         }
     }
 }

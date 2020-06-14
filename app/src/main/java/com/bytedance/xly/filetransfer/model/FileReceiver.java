@@ -120,6 +120,8 @@ public class FileReceiver extends BaseTransfer implements Runnable {
             }
 
         }
+        fos.flush();
+        fos.close();
         //记录文件结束写入时间
         long endTime = System.currentTimeMillis();
 

@@ -41,6 +41,7 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
                     Intent intent = new Intent(ReceicerActivity.this, FileReceiverActivity.class);
 //                    intent.putExtras(bundle);
                     ReceicerActivity.this.startActivity(intent);
+                    finish();
                     break;
 
             }
@@ -117,4 +118,5 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
         LogUtil.d(TAG, "onDestroy: ");
         mReceiverPresenter.destroy();
     }
+
 }

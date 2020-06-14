@@ -20,8 +20,12 @@ import com.bytedance.xly.util.FileUtils;
 import com.bytedance.xly.util.LogUtil;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FileReceiverActivity extends AppCompatActivity {
     private static final String TAG = "FileReceiverActivity";
@@ -33,7 +37,7 @@ public class FileReceiverActivity extends AppCompatActivity {
     TextView tv_value_time;
     TextView tv_unit_time;
     private FileSenderAdapter mFileReceiverAdapter;
-    long mTotalLen = 0;     //所有总文件的进度
+    AtomicLong mTotalLen = new AtomicLong(0);     //所有总文件的进度
     long mCurOffset = 0;    //每次传送的偏移量
     long mLastUpdateLen = 0; //每个文件传送onProgress() 之前的进度
     String[] mStorageArray = null;
@@ -44,7 +48,7 @@ public class FileReceiverActivity extends AppCompatActivity {
     long mLastUpdateTime = 0;
     String[] mTimeArray = null;
 
-    int mHasSendedFileCount = 0;
+    AtomicInteger mHasSendedFileCount = new AtomicInteger(0);
 
     public static final int MSG_FILE_RECEIVER_INIT_SUCCESS = 0X4444;
     public static final int MSG_ADD_FILE_INFO = 0X5555;
@@ -62,7 +66,7 @@ public class FileReceiverActivity extends AppCompatActivity {
             }else if(msg.what == MSG_UPDATE_FILE_INFO){
                 //ADD FileInfo 到 Adapter
                 updateTotalProgressView();
-                if(mFileReceiverAdapter != null) mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getFileInfos());
+                if(mFileReceiverAdapter != null) mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
             }
         }
     };
@@ -80,8 +84,8 @@ public class FileReceiverActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.lv_result);
         mFileReceiverAdapter = new FileSenderAdapter();
         recyclerView.setAdapter(mFileReceiverAdapter);
-        mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getFileInfos());
-
+        mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
+        LogUtil.d(TAG, "init: 待接收文件数量"  + TransferUtil.getInstance().getReceiveFileInfos().size() + "  待接收文件总大小" + TransferUtil.getInstance().getReceiveTotalSize());
         tv_title = findViewById(R.id.tv_title);
         pb_total = findViewById(R.id.pb_total);
         tv_value_storage = findViewById(R.id.tv_value_storage);
@@ -122,8 +126,13 @@ public class FileReceiverActivity extends AppCompatActivity {
         public void run() {
           LogUtil.d(TAG, "------>>>接收文件服务已经开启");
             try {
-                serverSocket = new ServerSocket(TransferUtil.DEFAULT_SERVER_PORT);
+                if (serverSocket == null){
+                    serverSocket = new ServerSocket();
+                }
+                serverSocket.setReuseAddress(true);
+                serverSocket.bind(new InetSocketAddress(TransferUtil.DEFAULT_SERVER_PORT));
                 mHandler.obtainMessage(MSG_FILE_RECEIVER_INIT_SUCCESS).sendToTarget();
+
                 while (!Thread.currentThread().isInterrupted()) {
                     Socket socket = serverSocket.accept();
 
@@ -143,7 +152,7 @@ public class FileReceiverActivity extends AppCompatActivity {
                         @Override
                         public void onGetFileInfo(FileInfo fileInfo) {
                             mHandler.obtainMessage(MSG_ADD_FILE_INFO, fileInfo).sendToTarget();
-                            LogUtil.d(TAG, "onGetFileInfo: " + fileInfo.getSize() + "B  文件名:" + fileInfo.getName());
+                            LogUtil.d(TAG, "onGetFileInfo: " + fileInfo.getSize() + "B  文件名:" + fileInfo.getFilePath());
                             mCurFileInfo = fileInfo;
 //                            AppContext.getAppContext().addReceiverFileInfo(mCurFileInfo);
                             mHandler.sendEmptyMessage(MSG_UPDATE_FILE_INFO);
@@ -158,16 +167,16 @@ public class FileReceiverActivity extends AppCompatActivity {
                         public void onProgress(long progress, long total) {
                             //=====更新进度 流量 时间视图 start ====//
                             mCurOffset = progress - mLastUpdateLen > 0 ? progress - mLastUpdateLen : 0;
-                            mTotalLen = mTotalLen + mCurOffset;
+                            mTotalLen.getAndAdd( mCurOffset);
                             mLastUpdateLen = progress;
-
+                            LogUtil.d(TAG, "progress : " + progress + "    total :" + total);
                             mCurTimeOffset = System.currentTimeMillis() - mLastUpdateTime > 0 ? System.currentTimeMillis() - mLastUpdateTime : 0;
                             mTotalTime = mTotalTime + mCurTimeOffset;
                             mLastUpdateTime = System.currentTimeMillis();
                             //=====更新进度 流量 时间视图 end ====//
 
                             mCurFileInfo.setProcceed(progress);
-                            TransferUtil.getInstance().updateFileInfo(mCurFileInfo);
+                            TransferUtil.getInstance().updateReceiveFileInfo(mCurFileInfo);
                             mHandler.sendEmptyMessage(MSG_UPDATE_FILE_INFO);
                         }
 
@@ -175,22 +184,24 @@ public class FileReceiverActivity extends AppCompatActivity {
                         public void onSuccess(FileInfo fileInfo) {
 
                             //=====更新进度 流量 时间视图 start ====//
-                            mHasSendedFileCount++;
-                            mTotalLen = mTotalLen + (fileInfo.getSize() - mLastUpdateLen);
-                            LogUtil.d(TAG, "onSuccess: " + mHasSendedFileCount + " 已传输总文件大小 = " + mTotalLen  + "  总文件大小:" + TransferUtil.getInstance().getTotalSize() );
+                            mHasSendedFileCount.getAndIncrement();
+                            mTotalLen.getAndAdd(fileInfo.getSize() - mLastUpdateLen);
+
+                            LogUtil.d(TAG, "onSuccess: " + mHasSendedFileCount + " 已传输总文件大小 = " + mTotalLen  + "  总文件大小:" + TransferUtil.getInstance().getReceiveTotalSize()
+                                + " 文件路径："  + fileInfo.getFilePath());
                             mLastUpdateLen = 0;
                             mLastUpdateTime = System.currentTimeMillis();
                             //=====更新进度 流量 时间视图 end ====//
                             fileInfo.setProcceed(fileInfo.getSize());
                             fileInfo.setResult(FileInfo.FLAG_SUCCESS);
-                            TransferUtil.getInstance().updateFileInfo(fileInfo);
+                            TransferUtil.getInstance().updateReceiveFileInfo(fileInfo);
                             mHandler.sendEmptyMessage(MSG_UPDATE_FILE_INFO);
                         }
 
                         @Override
                         public void onFailure(Throwable t, FileInfo fileInfo) {
-                            mHasSendedFileCount++;//统计发送文件
-
+                            mHasSendedFileCount.getAndIncrement();//统计发送文件
+                            LogUtil.d(TAG, "onFailure: ");
                             fileInfo.setResult(FileInfo.FLAG_FAILURE);
 //                            AppContext.getAppContext().updateFileInfo(fileInfo);
                             mHandler.sendEmptyMessage(MSG_UPDATE_FILE_INFO);
@@ -200,6 +211,8 @@ public class FileReceiverActivity extends AppCompatActivity {
 //                    mFileReceiver = fileReceiver;
 //                    new Thread(fileReceiver).start();
                     TransferUtil.getInstance().getExecutorService().execute(fileReceiver);
+
+                    LogUtil.d(TAG, "run: Thread.currentThread().isInterrupted() : " + Thread.currentThread().isInterrupted() + "  " + mHasSendedFileCount);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -217,13 +230,14 @@ public class FileReceiverActivity extends AppCompatActivity {
                     serverSocket.close();
                     serverSocket = null;
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
     private void updateTotalProgressView(){
         //设置传送的总容量大小
-        mStorageArray = FileUtils.getFileSizeArrayStr(mTotalLen);
+        mStorageArray = FileUtils.getFileSizeArrayStr(mTotalLen.get());
         tv_value_storage.setText(mStorageArray[0]);
         tv_unit_storage.setText(mStorageArray[1]);
 
@@ -234,18 +248,21 @@ public class FileReceiverActivity extends AppCompatActivity {
 
 
         //设置传送的进度条情况
-        if(mHasSendedFileCount == TransferUtil.getInstance().getFileInfos().size()){
+        if(mHasSendedFileCount.get() == TransferUtil.getInstance().getReceiveFileInfos().size()){
             pb_total.setProgress(0);
             tv_value_storage.setTextColor(getResources().getColor(R.color.color_yellow));
             tv_value_time.setTextColor(getResources().getColor(R.color.color_yellow));
             return;
         }
 
-        long total = TransferUtil.getInstance().getFileInfos().size();
-        int percent = (int)(mTotalLen * 100 /  total);
+        long total = TransferUtil.getInstance().getReceiveTotalSize();
+         //LogUtil.d(TAG, "updateTotalProgressView: totalSize =  " + total);
+
+
+        int percent = total != 0 ?(int)(mTotalLen.get() * 100 /  total) : 0;
         pb_total.setProgress(percent);
 
-        if(total  == mTotalLen){
+        if(total  == mTotalLen.get()){
             pb_total.setProgress(0);
             tv_value_storage.setTextColor(getResources().getColor(R.color.color_yellow));
             tv_value_time.setTextColor(getResources().getColor(R.color.color_yellow));
@@ -255,7 +272,15 @@ public class FileReceiverActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        TransferUtil.getInstance().clearFileInfo();
+
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.d(TAG, "onDestroy: ");
+        mReceiverServer.close();
+        TransferUtil.getInstance().clearReceiveFileInfo();
     }
 }

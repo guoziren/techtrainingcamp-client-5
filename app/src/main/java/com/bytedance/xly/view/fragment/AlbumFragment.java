@@ -92,41 +92,32 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
             @Override
             public void onShareClick() {
+                LogUtil.d(TAG, "onShareClick: ");
                 Intent intent = new Intent(getActivity(), SenderActivity.class);
-                ArrayList<String> paths = new ArrayList<>();
                 if (choosedCache.size() == 0){
                     ToastUtil.showToast(getActivity(), Toast.LENGTH_LONG,"尚未选择图片");
                     return;
                 }
+                //准备发送数据
                 for (DateAlbumBean dateAlbumBean : choosedCache) {
                     for (AlbumBean albumBean : dateAlbumBean.getItemList()) {
-                        paths.add(albumBean.getPath());
+                        FileInfo f = new FileInfo();
+                        f.setFilePath(albumBean.getPath());
+                        File file = new File(albumBean.getPath());
+                        f.setSize(file.length());
+                        f.setName(f.getName());
+                        f.setFileType(FileSender.TYPE_FILE);
+                        TransferUtil.getInstance().addSendFileInfo(f);
                     }
                 }
-                createFileInfo(choosedCache);
-
-                intent.putStringArrayListExtra(PATHS,paths);
+                TransferUtil.begin = System.currentTimeMillis();
                 startActivity(intent);
+
             }
         });
 
     }
 
-    private void createFileInfo(List<DateAlbumBean> choosedCache) {
-        for (DateAlbumBean dateAlbumBean : choosedCache) {
-            for (AlbumBean albumBean : dateAlbumBean.getItemList()) {
-                FileInfo f = new FileInfo();
-                f.setFilePath(albumBean.getPath());
-                File file = new File(albumBean.getPath());
-                f.setSize(file.length());
-                f.setName(f.getName());
-                f.setFileType(FileSender.TYPE_FILE);
-
-                TransferUtil.getInstance().addFileInfo(f);
-//                AppContext.getAppContext().addFileInfo(f);
-            }
-        }
-    }
 
 
     /**

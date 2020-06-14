@@ -34,12 +34,17 @@ public class SenderPresenter implements ISenderPresenter {
 
             @Override
             public void onTimeout() {
-                mSenderViewCallback.onSearchTimeout();
+                if (mSenderUDP != null && mSenderUDP.isSearchSwitch()){
+                    mSenderViewCallback.onSearchTimeout();
+                }
             }
 
             @Override
             public void onError(Exception e) {
-                mSenderViewCallback.onSearchFailed();
+                if (mSenderUDP != null && mSenderUDP.isSearchSwitch()){
+                    mSenderViewCallback.onSearchFailed();
+                }
+
             }
         });
     }
@@ -62,5 +67,6 @@ public class SenderPresenter implements ISenderPresenter {
     public void finish() {
         //结束搜索任务
         mSenderUDP.setSearchSwitch(false);
+        mSenderUDP.closeSocket();
     }
 }

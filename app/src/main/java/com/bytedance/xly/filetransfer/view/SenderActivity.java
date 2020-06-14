@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +23,7 @@ import com.bytedance.xly.filetransfer.ISenderViewCallback;
 import com.bytedance.xly.filetransfer.presenter.SenderPresenter;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.SystemInformationUtil;
+import com.bytedance.xly.util.TransferUtil;
 import com.bytedance.xly.util.UITool;
 import com.bytedance.xly.view.view.RadarScanView;
 
@@ -40,6 +42,7 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
     private static final int SEARCH_SUCCESS = 0;
     private static final int START_FILE_TRANSFER_ACTIVITY = 1;
     private static final int SEARCH_TIMEOUT = 2;
+    private static final int SEARCH_FAILED = 3;
 
     private List<String> mIPList = null;
 
@@ -51,9 +54,11 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
                 case SEARCH_SUCCESS:
                     mAdapter.setDataAndNotify(mIPList);
                     break;
+                case SEARCH_FAILED:
                 case SEARCH_TIMEOUT:
                     mRadarScanView.stopScan();
                     mBtnWait.setClickable(true);
+                    mBtnWait.setText(R.string.str_search_go_on);
                     mBtnWait.setTextColor(Color.parseColor("#aaaaaa"));
                     break;
                 case START_FILE_TRANSFER_ACTIVITY:
@@ -73,8 +78,10 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sender);
+
         init();
         initEvent();
+
     }
 
     private void initEvent() {
@@ -82,6 +89,7 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
             @Override
             public void onClick(View v) {
                 mBtnWait.setClickable(false);
+                mBtnWait.setText(R.string.str_searching);
                 mBtnWait.setTextColor(Color.parseColor("#eeeeee"));
                 mRadarScanView.startScan();
                 mSenderPresenter.search();
@@ -155,14 +163,15 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
 
     @Override
     public void onSearchFailed() {
-
+        LogUtil.d(TAG, "onSearchFailed: ");
+        mHandler.sendEmptyMessage(SEARCH_FAILED);
     }
 
     @Override
     public void onConnectedReceiver() {
         LogUtil.d(TAG, "onConnectedReceiver: 即将启动文件传输界面");
 
-        mHandler.sendEmptyMessage(START_FILE_TRANSFER_ACTIVITY);
+        mHandler.sendEmptyMessageDelayed(START_FILE_TRANSFER_ACTIVITY,500);
     }
 
     @Override
@@ -171,15 +180,21 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        mSenderPresenter.finish();
         LogUtil.d(TAG, "onDestroy: ");
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        mSenderPresenter.finish();
+        LogUtil.d(TAG, "onBackPressed: ");
         finish();
     }
 }

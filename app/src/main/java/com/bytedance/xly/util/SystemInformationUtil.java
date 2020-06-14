@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -82,7 +83,8 @@ public class SystemInformationUtil {
                 networkInterface = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                     inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+//                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
                         return inetAddress.getHostAddress();
                     }
                 }

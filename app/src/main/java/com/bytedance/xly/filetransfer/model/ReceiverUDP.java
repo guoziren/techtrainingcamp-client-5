@@ -56,14 +56,21 @@ public class ReceiverUDP {
             };
         return mBoradcastRunnable;
     }
+    /*
+     *    
+     */
+    private boolean broadcastSwicht = true;
+    private boolean receiveSwicht = true;
+    
+    
     private void broadcast(long waitTimemills) {
         LogUtil.d(TAG, "broadcast: ");
         long begin = System.currentTimeMillis();
         long current = 0;
-        while (true) {
+        while (broadcastSwicht) {
             current = System.currentTimeMillis();
             if (current - begin >= waitTimemills) {
-                LogUtil.i(TAG, "broadcast: 超时");
+                LogUtil.d(TAG, "broadcast: 超时");
                 mReceiverUDPListener.onTimeout();
                 break;
             }
@@ -92,7 +99,7 @@ public class ReceiverUDP {
                 mReceiverUDPListener.onError(e);
                 return;
             }
-            LogUtil.i(TAG, "broadcast: " + "开始广播自己的ip地址 目的端口号 " + TransferUtil.DEFAULT_SERVER_BROADCAST_PORT);
+            LogUtil.d(TAG, "broadcast: " + "开始广播自己的ip地址 目的端口号 " + TransferUtil.DEFAULT_SERVER_BROADCAST_PORT);
             try {
                 udpSocket.send(dataPacket);
                 Thread.sleep(INTERVALTIME);
@@ -113,15 +120,18 @@ public class ReceiverUDP {
     private ReceiverUDPListener mReceiverUDPListener;
 
     public void destroy() {
+        LogUtil.d(TAG, "destroy: ");
+        broadcastSwicht = false;
+        receiveSwicht = false;
         if (udpSocket != null && !udpSocket.isClosed()) {
             udpSocket.close();
-            udpSocket.disconnect();
+//            udpSocket.disconnect();
             udpSocket = null;
             dataPacket = null;
         }
         if (mDatagramSocket != null && !mDatagramSocket.isClosed()) {
             mDatagramSocket.close();
-            mDatagramSocket.disconnect();
+//            mDatagramSocket.disconnect();
             mDatagramSocket = null;
         }
     }
@@ -226,7 +236,8 @@ public class ReceiverUDP {
         FileInfo fileInfo = FileInfo.toObject(msg);
         if(fileInfo != null && fileInfo.getFilePath() != null){
 //            AppContext.getAppContext().addReceiverFileInfo(fileInfo);
-            TransferUtil.getInstance().addFileInfo(fileInfo);
+            TransferUtil.getInstance().addReceiveFileInfo(fileInfo);
         }
     }
+
 }

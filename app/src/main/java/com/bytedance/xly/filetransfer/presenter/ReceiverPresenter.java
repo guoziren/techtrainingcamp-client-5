@@ -48,6 +48,6 @@ public class ReceiverPresenter {
     }
 
     public void destroy() {
-       // mReceiverUDP.destroy();
+        mReceiverUDP.destroy();
     }
 }

@@ -123,7 +123,7 @@ public class FileSender extends BaseTransfer implements Runnable {
             }
             mOutputStream.write(bytes,0,len);
             total = total + len;
-            LogUtil.w(TAG, "parseBody: total " + total);
+//            LogUtil.w(TAG, "parseBody: total " + total);
             eTime = System.currentTimeMillis();
             Thread.sleep(50);
             //大于下面的数值才进行一次监听,更新进度

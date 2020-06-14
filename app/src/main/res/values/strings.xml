@@ -10,6 +10,8 @@
 
 
     <string name="str_0">0</string>
+    <string name="str_searching">正在搜索</string>
+    <string name="str_search_go_on">继续搜索</string>
     <string name="str_name">名称</string>
     <string name="str_title">标题</string>
     <string name="str_has_selected">已选（0）</string>
