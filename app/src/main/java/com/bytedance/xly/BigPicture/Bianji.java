@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,20 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bianji extends AppCompatActivity {
+    private static int rate;//旋转角度
     List<AlbumBean> list;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        rate = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bianji);
         final ImageView imageView=findViewById(R.id.bjimage);
         Button button=findViewById(R.id.bjxz);
         Button button1=findViewById(R.id.bjcj);
-       Intent i=getIntent();
+        Intent i=getIntent();
         final int path=i.getIntExtra("path",0);
-         list= (List<AlbumBean>) i.getSerializableExtra("array");
+        list= (List<AlbumBean>) i.getSerializableExtra("array");
         final Bitmap bitmap= BitmapFactory.decodeFile(list.get(path).getPath());
         imageView.setImageBitmap(bitmap);
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,8 +53,8 @@ public class Bianji extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                saveBmpToPath(bitmap,list.get(path).getPath());
+                String path1 = list.get(path).getPath();
+                saveBmpToPath(bitmap,path1);
                 Toast.makeText(Bianji.this,"保存成功",Toast.LENGTH_SHORT).show();
             }
         });
@@ -57,18 +62,23 @@ public class Bianji extends AppCompatActivity {
 
     }
     public static RequestOptions getRotateOptions(Context context){
-        return RequestOptions.bitmapTransform(new Transfrom(context,90));
+        rate = (rate+90)%360;//每次点击旋转角度加90°;
+        return RequestOptions.bitmapTransform(new Transfrom(context,rate));
     }
-    public boolean saveBmpToPath(final Bitmap bitmap, final String filePath) {
+
+    public boolean saveBmpToPath(Bitmap bitmap,String filePath) {
         if (bitmap == null || filePath == null) {
             return false;
         }
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rate);
+        Bitmap bitmap_duplicate = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         boolean result = false; //默认结果
         File file = new File(filePath);
         OutputStream outputStream = null; //文件输出流
         try {
             outputStream = new FileOutputStream(file);
-            result = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); //将图片压缩为JPEG格式写到文件输出流，100是最大的质量程度
+            result = bitmap_duplicate.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); //将图片压缩为JPEG格式写到文件输出流，100是最大的质量程度
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
