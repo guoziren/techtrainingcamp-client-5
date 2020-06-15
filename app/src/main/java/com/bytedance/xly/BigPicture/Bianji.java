@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,7 +28,10 @@ import java.util.List;
 
 public class Bianji extends AppCompatActivity {
     private static int rate;//旋转角度
+    private static boolean is_caijian = false;//是否裁剪过
     List<AlbumBean> list;
+    private static Bitmap bitmap_duplicate;
+    private CropImageView mCropImageView;
 
 
 
@@ -36,43 +40,70 @@ public class Bianji extends AppCompatActivity {
         rate = 0;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bianji);
-        final ImageView imageView=findViewById(R.id.bjimage);
+        mCropImageView = (CropImageView) findViewById(R.id.bjimage);
+        //final ImageView imageView=findViewById(R.id.bjimage);
         Button button=findViewById(R.id.bjxz);
         Button button1=findViewById(R.id.bjcj);
+        Button button2=findViewById(R.id.bjbc);
         Intent i=getIntent();
         final int path=i.getIntExtra("path",0);
         list= (List<AlbumBean>) i.getSerializableExtra("array");
-        final Bitmap bitmap= BitmapFactory.decodeFile(list.get(path).getPath());
-        imageView.setImageBitmap(bitmap);
+        Bitmap bitmap = BitmapFactory.decodeFile(list.get(path).getPath());
+        bitmap_duplicate = bitmap;
+        resetView(is_caijian);
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Glide.with(Bianji.this).load(bitmap).apply(getRotateOptions(Bianji.this)).into(imageView);
+
+                //Glide.with(Bianji.this).load(bitmap).apply(getRotateOptions(Bianji.this)).into(imageView);
+                Matrix matrix = new Matrix();
+                rate = (rate+90)%360;
+                matrix.postRotate(rate);
+                bitmap_duplicate = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                //imageView.setImageBitmap(bitmap_duplicate);
+                resetView(is_caijian);
             }
         });
+
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                is_caijian = true;
+                resetView(is_caijian);
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 String path1 = list.get(path).getPath();
-                saveBmpToPath(bitmap,path1);
-                Toast.makeText(Bianji.this,"保存成功",Toast.LENGTH_SHORT).show();
+                saveBmpToPath(path1);
+                Toast.makeText(Bianji.this,"保存成功啦",Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
-    public static RequestOptions getRotateOptions(Context context){
-        rate = (rate+90)%360;//每次点击旋转角度加90°;
-        return RequestOptions.bitmapTransform(new Transfrom(context,rate));
-    }
+//    public static RequestOptions getRotateOptions(Context context){
+//        rate = (rate+90)%360;//每次点击旋转角度加90°;
+//        return RequestOptions.bitmapTransform(new Transfrom(context,rate));
+//    }
 
-    public boolean saveBmpToPath(Bitmap bitmap,String filePath) {
-        if (bitmap == null || filePath == null) {
+    public boolean saveBmpToPath(String filePath) {
+        if (bitmap_duplicate == null || filePath == null) {
             return false;
         }
-        Matrix matrix = new Matrix();
-        matrix.postRotate(rate);
-        Bitmap bitmap_duplicate = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        if(is_caijian){
+            bitmap_duplicate = mCropImageView.getCropImage();
+            mCropImageView.setBitmap(bitmap_duplicate);
+            mCropImageView.setVisibility(View.VISIBLE);
+            is_caijian = false;
+        }
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(rate);
+//        bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, bitmap_duplicate.getWidth(), bitmap_duplicate.getHeight(), matrix, true);
         boolean result = false; //默认结果
         File file = new File(filePath);
         OutputStream outputStream = null; //文件输出流
@@ -92,5 +123,28 @@ public class Bianji extends AppCompatActivity {
         }
         return result;
     }
+
+    //重新设置ImageView，如果false，便只加载图片
+    private void resetView(boolean flag) {
+        mCropImageView.setVisibility(View.GONE);
+        if(flag)
+            mCropImageView.setDrawable(300, 300);
+        else
+            mCropImageView.setBitmap(bitmap_duplicate);
+        mCropImageView.setVisibility(View.VISIBLE);
+
+    }
+
+//    private void tran_bitmap(){
+//        int Weight = bitmap_duplicate.getWidth();
+//        int Height = bitmap_duplicate.getHeight();
+//        DisplayMetrics dm2 = getResources().getDisplayMetrics();
+//        int WeightRatio = Math.round((float)dm2.widthPixels/Weight);
+//        int HeightRatio = Math.round((float)dm2.heightPixels/Height);
+//        float inSampleSize = Math.min(WeightRatio,HeightRatio);
+//        options.inJustDecodeBounds =false;
+//        bitmap = BitmapFactory.decodeFile(mResId, options);
+//    }
+
 
 }
