@@ -50,6 +50,7 @@ public class Bianji extends AppCompatActivity {
         list= (List<AlbumBean>) i.getSerializableExtra("array");
         Bitmap bitmap = BitmapFactory.decodeFile(list.get(path).getPath());
         bitmap_duplicate = bitmap;
+        is_too_small();//如果图片太小先放大。
         resetView(is_caijian);
 
 
@@ -59,9 +60,9 @@ public class Bianji extends AppCompatActivity {
 
                 //Glide.with(Bianji.this).load(bitmap).apply(getRotateOptions(Bianji.this)).into(imageView);
                 Matrix matrix = new Matrix();
-                rate = (rate+90)%360;
-                matrix.postRotate(rate);
-                bitmap_duplicate = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                //rate = (rate+90)%360;
+                matrix.postRotate(90);
+                bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, bitmap_duplicate.getWidth(), bitmap_duplicate.getHeight(), matrix, true);
                 //imageView.setImageBitmap(bitmap_duplicate);
                 resetView(is_caijian);
             }
@@ -135,6 +136,23 @@ public class Bianji extends AppCompatActivity {
 
     }
 
+    //针对缩略图，图片太小无法容纳屏幕时用
+    private void is_too_small(){
+        int Weight = bitmap_duplicate.getWidth();
+        int Height = bitmap_duplicate.getHeight();
+        DisplayMetrics dm2 = getResources().getDisplayMetrics();
+        float WeightRatio = (float)dm2.widthPixels/Weight;
+        float HeightRatio = (float)dm2.heightPixels/Height;
+        float inSampleSize = Math.min(WeightRatio,HeightRatio);
+        if(WeightRatio>1&&HeightRatio>1){
+            //如果屏幕像素宽和高/图片像素宽和高 大于1 证明 图片比屏幕小，要放大到图片大小
+            Matrix matrix = new Matrix();
+            matrix.postScale(inSampleSize,inSampleSize);
+            bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, Weight, Height, matrix, true);
+        }
+
+    }
+
 //    private void tran_bitmap(){
 //        int Weight = bitmap_duplicate.getWidth();
 //        int Height = bitmap_duplicate.getHeight();
@@ -142,8 +160,6 @@ public class Bianji extends AppCompatActivity {
 //        int WeightRatio = Math.round((float)dm2.widthPixels/Weight);
 //        int HeightRatio = Math.round((float)dm2.heightPixels/Height);
 //        float inSampleSize = Math.min(WeightRatio,HeightRatio);
-//        options.inJustDecodeBounds =false;
-//        bitmap = BitmapFactory.decodeFile(mResId, options);
 //    }
 
 
