@@ -50,7 +50,7 @@
         android:layout_marginBottom="4dp"
         android:gravity="center"
         android:padding="0dp"
-        android:text="双方需在同一局域网下,请对方选择发送文件"
+        android:text="双方需在同一局域网下,请对方选择文件发送"
         app:layout_constraintBottom_toTopOf="@+id/tv_ip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

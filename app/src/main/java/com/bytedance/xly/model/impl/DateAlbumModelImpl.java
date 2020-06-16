@@ -74,15 +74,15 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
             }
             long before = -1;
             DateAlbumBean datealbumbean = null;
-            LogUtil.e(TAG, "cursor size: " + cursor.getCount());
+            LogUtil.d(TAG, "cursor size: " + cursor.getCount());
             int count = 0;
             while (cursor.moveToNext()) {
                 int index = cursor.getColumnIndexOrThrow(projection[0]);
                 int index_data_taken = cursor.getColumnIndexOrThrow(projection[1]);
                 int index_data_thumbnails = cursor.getColumnIndexOrThrow(projection[2]);
-                String path = cursor.getString(index); // 文件地址
-                String data_taken = cursor.getString(index_data_taken); // 文件添加时间
-                String data_thumbnails = cursor.getString(index_data_thumbnails); // 文件缩略图地址
+                String path = cursor.getString(index); // 图片路径
+                String data_taken = cursor.getString(index_data_taken); // 图片添加时间
+                String data_thumbnails = cursor.getString(index_data_thumbnails); // 图片缩略图路径
                 // Log.d(TAG, "getSystemPhotoList: path = " + path);
                 File file = new File(path);
 
@@ -96,15 +96,7 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                     long date = Long.parseLong(data_taken);
                     albumBean.setDate(date);
                     albumBean.setPath(path);
-//                    DateAlbumBean datealbumbean = new DateAlbumBean();
-//                    datealbumbean.setDate(albumBean.getDate());
-//                    int index1 = mData.indexOf(datealbumbean);
-//                    if (index1 >= 0) {
-//                        mData.get(index1).getItemList().add(albumBean);
-//                    } else {
-//                        datealbumbean.getItemList().add(albumBean);
-//                        mData.add(datealbumbean);
-//                    }
+
                     if (date / DateAlbumBean.day != before / DateAlbumBean.day){
                         if (before != -1){
                             mData.add(datealbumbean);

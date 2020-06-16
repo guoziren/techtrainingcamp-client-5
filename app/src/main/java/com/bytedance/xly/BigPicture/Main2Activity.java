@@ -3,6 +3,8 @@ package com.bytedance.xly.BigPicture;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 //<<<<<<< HEAD
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,10 +34,15 @@ import androidx.viewpager.widget.PagerAdapter;
 //>>>>>>> master
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.bytedance.xly.R;
 import com.bytedance.xly.model.bean.AlbumBean;
+import com.bytedance.xly.tuya.model.BLScrawlParam;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
 
+import java.io.File;
 import java.io.Serializable;
 
 import java.util.List;
@@ -51,6 +58,8 @@ public class Main2Activity extends AppCompatActivity {
     private ScalePagerAdapter mAdapter;
     private static final String TAG = "Main2Activity";
     private boolean isFirst=true;
+    private Button mBtnTuya;
+    private Button mBtnCaiJian;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +70,8 @@ public class Main2Activity extends AppCompatActivity {
 
         Button button=findViewById(R.id.huaban);//这是涂鸦
         Button button1=findViewById(R.id.bianji);//这是旋转功能的入口
+        mBtnTuya = findViewById(R.id.tuya);
+        mBtnCaiJian = findViewById(R.id.caijian);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,9 +102,50 @@ public class Main2Activity extends AppCompatActivity {
         }
 
         initView();
-
+        initEvent();
     }
 
+    private void initEvent() {
+        mBtnTuya.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onScrawlClick();
+            }
+        });
+        mBtnCaiJian.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoUCropActivity();
+            }
+        });
+    }
+    private void onScrawlClick() {
+        BLScrawlParam.bitmap = BitmapFactory.decodeFile(picturePath.get(currentPage).getPath());
+//        Intent intent = new Intent(mInstance, BLScrawlActivity.class);
+//        intent.putExtra(BLScrawlParam.KEY, new BLScrawlParam());
+//        ActivityUtils.startActivityForResult(mInstance, intent, BLScrawlParam.REQUEST_CODE_SCRAWL);
+        BLScrawlParam.startActivity(Main2Activity.this, new BLScrawlParam());
+    }
+    private void gotoUCropActivity() {
+        Uri source = Uri.fromFile(new File(picturePath.get(currentPage).getPath()));
+        Uri destination = Uri.fromFile(new File(getCacheDir(), getPackageName()));
+        UCrop uCrop = UCrop.of(source, destination);
+
+        uCrop.useSourceImageAspectRatio();
+//        uCrop.withAspectRatio(3,2);
+        UCrop.Options options = new UCrop.Options();
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.SCALE);
+////        设置裁剪框自由移动
+        options.setFreeStyleCropEnabled(true);
+//        //设置裁剪比例
+//        options.setAspectRatioOptions(1, new AspectRatio(null, 5, 4), new AspectRatio(null, 16,9),new AspectRatio(getString(R.string.ucrop_label_original).toUpperCase(),
+//                CropImageView.SOURCE_IMAGE_ASPECT_RATIO, CropImageView.SOURCE_IMAGE_ASPECT_RATIO), new AspectRatio(null, 3, 4), new AspectRatio(null, 6, 7));
+        options.setStatusBarColor(Color.BLACK);
+        options.setToolbarColor(Color.BLACK);
+        options.setActiveWidgetColor(Color.BLACK);
+        uCrop.withOptions(options);
+        uCrop.start(Main2Activity.this);
+    }
     private class ScalePagerAdapter extends PagerAdapter {
 
         @Override
