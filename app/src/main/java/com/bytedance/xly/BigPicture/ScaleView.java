@@ -249,12 +249,12 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
 
         // 进行缩放范围的控制
         // 判断，如果<最大缩放值，表示可以放大，如果》最小缩放，说明可以缩小
-        if ((scale < mMaxScale && intentScale > 1.0f) || (scale > mInitScale && intentScale < 1.0f)) {
+        if ((scale < mMaxScale && intentScale > 1.0f) || (scale > mInitScale/2 && intentScale < 1.0f)) {
 
             // scale 变小时， intentScale变小
-            if (scale * intentScale < mInitScale) {
+            if (scale * intentScale < mInitScale/2) {
                 // intentScale * scale = mInitScale ;
-                intentScale = mInitScale / scale;
+                intentScale = mInitScale / scale/2;
             }
 
             // scale 变大时， intentScale变大
