@@ -138,11 +138,11 @@ public class Main2Activity extends AppCompatActivity {
 
 
 //<<<<<<< HEAD
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        gd1.onTouchEvent(ev);
-//        return super.dispatchTouchEvent(ev);
-//    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        gd1.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
+    }
 //=======
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -156,66 +156,12 @@ public class Main2Activity extends AppCompatActivity {
         this.picturePath = (List<AlbumBean>) intent.getSerializableExtra("picturePath");
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
-//<<<<<<< HEAD
-//
-//        ViewPage.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//            RelativeLayout layout = findViewById(R.id.layout);
-//            if(event.getAction()==MotionEvent.ACTION_UP){
-//                if(layout.getVisibility()== View.VISIBLE){
-//                    layout.setVisibility(View.INVISIBLE);
-//                }else {
-//                    layout.setVisibility(View.VISIBLE);
-//                }
-//            }
-//                return false;
-//            }
-//        });
-//        ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-//
-//            public Fragment getItem(int i) {
-//                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return Main2Activity.this.picturePath.size();
-//            }
-//        });
-//        ViewPage.setCurrentItem(currentPage);
+
         mScaleViews = new ScaleView[picturePath.size()];
         mAdapter = new ScalePagerAdapter();
 
         ViewPage.setAdapter(mAdapter);
-//=======
-//
-//        ViewPage.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//            RelativeLayout layout = findViewById(R.id.layout);
-//            if(event.getAction()==MotionEvent.ACTION_UP){
-//                if(layout.getVisibility()== View.VISIBLE){
-//                    layout.setVisibility(View.INVISIBLE);
-//                }else {
-//                    layout.setVisibility(View.VISIBLE);
-//                }
-//            }
-//                return false;
-//            }
-//        });
-//        ViewPage.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-//
-//            public Fragment getItem(int i) {
-//                return SplashFragment.newInstance(Main2Activity.this.picturePath.get(i).getPath());
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return Main2Activity.this.picturePath.size();
-//            }
-//        });
-//>>>>>>> master
+
         ViewPage.setCurrentItem(currentPage);
     }
 
