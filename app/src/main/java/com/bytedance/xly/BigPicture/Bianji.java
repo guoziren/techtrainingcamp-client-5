@@ -30,7 +30,7 @@ public class Bianji extends AppCompatActivity {
     private static int rate;//旋转角度
     private static boolean is_caijian = false;//是否裁剪过
     List<AlbumBean> list;
-    private static Bitmap bitmap_duplicate;
+    private static Bitmap bitmap;
     private CropImageView mCropImageView;
 
 
@@ -48,9 +48,9 @@ public class Bianji extends AppCompatActivity {
         Intent i=getIntent();
         final int path=i.getIntExtra("path",0);
         list= (List<AlbumBean>) i.getSerializableExtra("array");
-        Bitmap bitmap = BitmapFactory.decodeFile(list.get(path).getPath());
-        bitmap_duplicate = bitmap;
-        is_too_small();//如果图片太小先放大。
+        //Bitmap bitmap = BitmapFactory.decodeFile(list.get(path).getPath());
+        bitmap = load_picture(list.get(path).getPath());
+        //is_too_small();//如果图片太小先放大。
         resetView(is_caijian);
 
 
@@ -62,8 +62,9 @@ public class Bianji extends AppCompatActivity {
                 Matrix matrix = new Matrix();
                 //rate = (rate+90)%360;
                 matrix.postRotate(90);
-                bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, bitmap_duplicate.getWidth(), bitmap_duplicate.getHeight(), matrix, true);
-                //imageView.setImageBitmap(bitmap_duplicate);
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                //imageView.setImageBitmap(bitmap);
+                is_too_small();//旋转后若想放大图片，用此函数。
                 resetView(is_caijian);
             }
         });
@@ -73,6 +74,7 @@ public class Bianji extends AppCompatActivity {
             public void onClick(View v) {
                 is_caijian = true;
                 resetView(is_caijian);
+                is_caijian = false;
             }
         });
 
@@ -93,24 +95,23 @@ public class Bianji extends AppCompatActivity {
 //    }
 
     public boolean saveBmpToPath(String filePath) {
-        if (bitmap_duplicate == null || filePath == null) {
+        if (bitmap == null || filePath == null) {
             return false;
         }
         if(is_caijian){
-            bitmap_duplicate = mCropImageView.getCropImage();
-            mCropImageView.setBitmap(bitmap_duplicate);
+            bitmap = mCropImageView.getCropImage();
+            mCropImageView.setBitmap(bitmap);
             mCropImageView.setVisibility(View.VISIBLE);
-            is_caijian = false;
         }
 //        Matrix matrix = new Matrix();
 //        matrix.postRotate(rate);
-//        bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, bitmap_duplicate.getWidth(), bitmap_duplicate.getHeight(), matrix, true);
+//        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         boolean result = false; //默认结果
         File file = new File(filePath);
         OutputStream outputStream = null; //文件输出流
         try {
             outputStream = new FileOutputStream(file);
-            result = bitmap_duplicate.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); //将图片压缩为JPEG格式写到文件输出流，100是最大的质量程度
+            result = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream); //将图片压缩为JPEG格式写到文件输出流，100是最大的质量程度
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -131,15 +132,15 @@ public class Bianji extends AppCompatActivity {
         if(flag)
             mCropImageView.setDrawable(300, 300);
         else
-            mCropImageView.setBitmap(bitmap_duplicate);
+            mCropImageView.setBitmap(bitmap);
         mCropImageView.setVisibility(View.VISIBLE);
 
     }
 
-    //针对缩略图，图片太小无法容纳屏幕时用
+    //针对缩略图，图片太小无法容纳屏幕时用（放大图片的功能）
     private void is_too_small(){
-        int Weight = bitmap_duplicate.getWidth();
-        int Height = bitmap_duplicate.getHeight();
+        int Weight = bitmap.getWidth();
+        int Height = bitmap.getHeight();
         DisplayMetrics dm2 = getResources().getDisplayMetrics();
         float WeightRatio = (float)dm2.widthPixels/Weight;
         float HeightRatio = (float)dm2.heightPixels/Height;
@@ -148,14 +149,31 @@ public class Bianji extends AppCompatActivity {
             //如果屏幕像素宽和高/图片像素宽和高 大于1 证明 图片比屏幕小，要放大到图片大小
             Matrix matrix = new Matrix();
             matrix.postScale(inSampleSize,inSampleSize);
-            bitmap_duplicate = Bitmap.createBitmap(bitmap_duplicate, 0, 0, Weight, Height, matrix, true);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, Weight, Height, matrix, true);
         }
 
     }
 
+    //加载图片，防止加载大图崩了。
+    private Bitmap load_picture(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds =true;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        int Weight = options.outWidth;
+        int Height = options.outHeight;
+        DisplayMetrics dm2 = getResources().getDisplayMetrics();
+        int WeightRatio = Math.round((float)Weight/dm2.widthPixels);
+        int HeightRatio = Math.round((float)Height/dm2.heightPixels);
+        options.inSampleSize = Math.max(WeightRatio,HeightRatio);
+        options.inJustDecodeBounds =false;
+        bitmap = BitmapFactory.decodeFile(path, options);
+        return bitmap;
+    }
+
+
 //    private void tran_bitmap(){
-//        int Weight = bitmap_duplicate.getWidth();
-//        int Height = bitmap_duplicate.getHeight();
+//        int Weight = bitmap.getWidth();
+//        int Height = bitmap.getHeight();
 //        DisplayMetrics dm2 = getResources().getDisplayMetrics();
 //        int WeightRatio = Math.round((float)dm2.widthPixels/Weight);
 //        int HeightRatio = Math.round((float)dm2.heightPixels/Height);
