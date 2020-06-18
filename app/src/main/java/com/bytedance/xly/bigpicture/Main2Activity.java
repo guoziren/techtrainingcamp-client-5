@@ -1,40 +1,29 @@
 package com.bytedance.xly.bigpicture;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+
 import android.content.Intent;
-//<<<<<<< HEAD
+
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-//=======
-//import android.os.Build;
-//import android.os.Bundle;
-//import android.view.GestureDetector;
-//import android.view.MotionEvent;
-//import android.view.View;
-//>>>>>>> master
+
 import android.view.WindowManager;
 import android.widget.Button;
 
-//<<<<<<< HEAD
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
-//=======
-//import androidx.appcompat.app.AppCompatActivity;
-//import androidx.fragment.app.Fragment;
-//import androidx.fragment.app.FragmentStatePagerAdapter;
-//>>>>>>> master
+
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
@@ -47,10 +36,9 @@ import com.yalantis.ucrop.UCropActivity;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.Serializable;
 
-import java.net.URI;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
@@ -58,8 +46,7 @@ public class Main2Activity extends AppCompatActivity {
     private ViewPager ViewPage;
     private int currentPage;
     private GestureDetector gd1;//手势
-    private static final int MY_PERMISSIONS_REQUEST_READ_MEDIA = 1;
-//<<<<<<< HEAD
+
     private ScaleView[] mScaleViews;
     private ScalePagerAdapter mAdapter;
     private static final String TAG = "Main2Activity";
@@ -71,8 +58,6 @@ public class Main2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
-        //gd1 = new GestureDetector(this,new SimpleOnGestureListener());
 
         Button button=findViewById(R.id.huaban);//这是涂鸦
         Button button1=findViewById(R.id.bianji);//这是旋转功能的入口
@@ -193,10 +178,7 @@ public class Main2Activity extends AppCompatActivity {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-//          if (object instanceof ScaleView) {
-//              ScaleView scaleView = (ScaleView) object;
-//              container.removeView(scaleView);
-//          }
+
             Log.d(TAG, "destroyItem: ");
             container.removeView(mScaleViews[position]);
         }
@@ -220,20 +202,12 @@ public class Main2Activity extends AppCompatActivity {
     }
 
 
-
-//<<<<<<< HEAD
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         gd1.onTouchEvent(ev);
         return super.dispatchTouchEvent(ev);
     }
-//=======
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        gd1.onTouchEvent(ev);
-//        return super.dispatchTouchEvent(ev);
-//    }
-//>>>>>>> master
+
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         Intent intent = getIntent();
