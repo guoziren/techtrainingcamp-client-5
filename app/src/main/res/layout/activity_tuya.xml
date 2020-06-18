@@ -5,9 +5,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BigPicture.Tuya">
+    tools:context=".bigpicture.Tuya">
 
-        <com.bytedance.xly.BigPicture.tuyapath
+        <com.bytedance.xly.bigpicture.tuyapath
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tuyapath"/>

@@ -168,23 +168,7 @@ public class SenderUDP implements ISenderUDP {
      */
     private void startFileSenderServer(String targetIpAddr, int serverPort) throws Exception{
         LogUtil.d(TAG, "startFileSenderServer: 我是发送方：已发现接收方Ip地址，通知它建立连接以便发送文件 ");
-//        Thread.sleep(3*1000);
-        // 确保Wifi连接上之后获取得到IP地址
-//        int count = 0;
-//        while(targetIpAddr.equals(Constant.DEFAULT_UNKOWN_IP) && count < Constant.DEFAULT_TRY_TIME){
-//            Thread.sleep(1000);
-//            targetIpAddr = WifiMgr.getInstance(getContext()).getIpAddressFromHotspot();
-//            Log.i(TAG, "receiver serverIp ----->>>" + targetIpAddr);
-//            count ++;
-//        }
-//
-//        // 即使获取到连接的热点wifi的IP地址也是无法连接网络 所以采取此策略
-//        count = 0;
-//        while(!NetUtils.pingIpAddress(targetIpAddr) && count < Constant.DEFAULT_TRY_TIME){
-//            Thread.sleep(500);
-//            Log.i(TAG, "try to ping ----->>>" + targetIpAddr + " - " + count );
-//            count ++;
-//        }
+
 
         mNotifyDatagramSocket = new DatagramSocket();
         byte[] receiveData = new byte[1024];

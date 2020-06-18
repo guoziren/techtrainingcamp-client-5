@@ -44,7 +44,6 @@ public class ReceiveFileAdapter extends RecyclerView.Adapter<ReceiveFileAdapter.
     TextView tv_progress;
     ProgressBar pb_file;
 
-    Button btn_operation;
     ImageView iv_tick;
     public Holder(@NonNull View itemView) {
         super(itemView);
@@ -52,7 +51,6 @@ public class ReceiveFileAdapter extends RecyclerView.Adapter<ReceiveFileAdapter.
         tv_name = (TextView) itemView.findViewById(R.id.tv_name);
         tv_progress = (TextView) itemView.findViewById(R.id.tv_progress);
         pb_file = (ProgressBar) itemView.findViewById(R.id.pb_file);
-        btn_operation = (Button) itemView.findViewById(R.id.btn_operation);
         iv_tick = (ImageView) itemView.findViewById(R.id.iv_tick);
     }
     public void setData(FileInfo fileInfo){
@@ -76,8 +74,6 @@ public class ReceiveFileAdapter extends RecyclerView.Adapter<ReceiveFileAdapter.
                 long total = fileInfo.getSize();
                 pb_file.setVisibility(View.GONE);
                 tv_progress.setText(FileUtils.getFileSize(total) + "/" + FileUtils.getFileSize(total));
-
-                btn_operation.setVisibility(View.INVISIBLE);
                 iv_tick.setVisibility(View.VISIBLE);
 
             }else if(fileInfo.getResult() == FileInfo.FLAG_FAILURE) { //文件传输失败
@@ -91,15 +87,6 @@ public class ReceiveFileAdapter extends RecyclerView.Adapter<ReceiveFileAdapter.
                 pb_file.setMax(100);
                 pb_file.setProgress(percent);
 
-                //TODO 传输过程中取消的问题
-//                    btn_operation.setText(mContext.getString(R.string.str_cancel));
-                btn_operation.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        //可否通过广播来实现？
-                    }
-                });
             }
         }
     }

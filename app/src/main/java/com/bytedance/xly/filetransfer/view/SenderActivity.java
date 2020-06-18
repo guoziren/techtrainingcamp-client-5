@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,9 +22,8 @@ import com.bytedance.xly.filetransfer.ISenderViewCallback;
 import com.bytedance.xly.filetransfer.presenter.SenderPresenter;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.SystemInformationUtil;
-import com.bytedance.xly.util.TransferUtil;
 import com.bytedance.xly.util.UITool;
-import com.bytedance.xly.view.view.RadarScanView;
+import com.bytedance.xly.thumbnail.view.RadarScanView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,6 +151,7 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
         });
         mSenderPresenter = new SenderPresenter( this);
         mSenderPresenter.search();
+
     }
 
     @Override
