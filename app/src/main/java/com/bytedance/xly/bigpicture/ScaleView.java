@@ -263,10 +263,6 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
                 intentScale = mMaxScale / scale;
             }
 
-            // 以控件为中心缩放
-            // mMatrix.postScale(intentScale, intentScale, getWidth()/2,
-            // getHeight()/2);
-            // 以手势为中心缩放
             mMatrix.postScale(intentScale, intentScale, detector.getFocusX(), detector.getFocusY());
 
             // 检测边界与中心点
@@ -449,6 +445,12 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
             case MotionEvent.ACTION_CANCEL:
                 // 手指数清零
                 mLastPointerCount = 0;
+                mMatrix.postScale(mInitScale/getScale(), mInitScale/getScale(), x, y);
+
+                // 检测边界与中心点
+                checkSideAndCenterWhenScale();
+
+                setImageMatrix(mMatrix);
 
                 break;
         }
