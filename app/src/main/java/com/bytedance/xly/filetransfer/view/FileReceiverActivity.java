@@ -60,14 +60,20 @@ public class FileReceiverActivity extends AppCompatActivity {
     }
 
     private void init() {
+
         RecyclerView recyclerView = findViewById(R.id.lv_result);
         mFileReceiverAdapter = new FileSenderAdapter();
         recyclerView.setAdapter(mFileReceiverAdapter);
         mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
         LogUtil.d(TAG, "init: 待接收文件数量"  + TransferUtil.getInstance().getReceiveFileInfos().size() + "  待接收文件总大小" + TransferUtil.getInstance().getReceiveTotalSize());
+
         tv_title = findViewById(R.id.tv_title);
         tv_title.setVisibility(View.VISIBLE);
         tv_title.setText(getResources().getString(R.string.title_file_receive));
+
+        TextView tv_directory = findViewById(R.id.directory);
+        tv_directory.setText(R.string.receive_directory);
+
         TextView tv_back = findViewById(R.id.tv_back);
         tv_back.setOnClickListener(new View.OnClickListener() {
             @Override

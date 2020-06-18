@@ -103,7 +103,6 @@ public class FileSenderActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(FileInfo fileInfo) {
-                    //TODO 成功
                     fileInfo.setResult(FileInfo.FLAG_SUCCESS);
                     TransferUtil.getInstance().updateSendFileInfo(fileInfo);
                     mHandler.sendEmptyMessage(MSG_UPDATE_FILE_INFO);

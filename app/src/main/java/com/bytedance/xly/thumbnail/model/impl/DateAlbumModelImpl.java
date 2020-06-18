@@ -71,7 +71,6 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
             long before = -1;
             DateAlbumBean datealbumbean = null;
             LogUtil.d(TAG, "cursor size: " + cursor.getCount());
-            int count = 0;
             while (cursor.moveToNext()) {
                 int index = cursor.getColumnIndexOrThrow(projection[0]);
                 int index_data_taken = cursor.getColumnIndexOrThrow(projection[1]);
@@ -79,10 +78,8 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
                 String path = cursor.getString(index); // 图片路径
                 String data_taken = cursor.getString(index_data_taken); // 图片添加时间
                 String data_thumbnails = cursor.getString(index_data_thumbnails); // 图片缩略图路径
-                // Log.d(TAG, "getSystemPhotoList: path = " + path);
                 File file = new File(path);
                 File file_thumb = new File(data_thumbnails);
-
                 if (file.exists() && file_thumb.exists()) {
                     AlbumBean albumBean = new AlbumBean();
                     albumBean.setThumbPath(data_thumbnails);

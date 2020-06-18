@@ -1,6 +1,7 @@
 package com.bytedance.xly.bigpicture;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 //<<<<<<< HEAD
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -25,6 +27,7 @@ import android.widget.Button;
 
 //<<<<<<< HEAD
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 //=======
@@ -35,15 +38,19 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bytedance.xly.R;
+import com.bytedance.xly.filetransfer.view.FileReceiverActivity;
 import com.bytedance.xly.thumbnail.model.bean.AlbumBean;
 import com.bytedance.xly.tuya.model.BLScrawlParam;
+import com.bytedance.xly.util.LogUtil;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropActivity;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 
+import java.net.URI;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
@@ -126,8 +133,9 @@ public class Main2Activity extends AppCompatActivity {
         BLScrawlParam.startActivity(Main2Activity.this, new BLScrawlParam());
     }
     private void gotoUCropActivity() {
-        Uri source = Uri.fromFile(new File(picturePath.get(currentPage).getPath()));
-        Uri destination = Uri.fromFile(new File(getCacheDir(), getPackageName()));
+        File sourceFile = new File(picturePath.get(currentPage).getPath());
+        Uri source = Uri.fromFile(sourceFile);
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "caijian_"+sourceFile.getName()));
         UCrop uCrop = UCrop.of(source, destination);
 
         uCrop.useSourceImageAspectRatio();
@@ -145,6 +153,31 @@ public class Main2Activity extends AppCompatActivity {
         uCrop.withOptions(options);
         uCrop.start(Main2Activity.this);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            switch (requestCode){
+                case UCrop.REQUEST_CROP:
+                    LogUtil.d(TAG, "onActivityResult: 裁剪成功");
+//                    Uri croppedUri = UCrop.getOutput(data);
+//                    File croppedFile = new File(croppedUri.getPath());
+//                    // 通知相册有新图片
+//                    try {
+//                        MediaStore.Images.Media.insertImage(getContentResolver(),
+//                                croppedFile.getAbsolutePath(),croppedFile.getName() , null);
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//                    intent.setData(croppedUri);
+//                    Main2Activity.this.sendBroadcast(intent);
+                    break;
+            }
+        }
+    }
+
     private class ScalePagerAdapter extends PagerAdapter {
 
         @Override
