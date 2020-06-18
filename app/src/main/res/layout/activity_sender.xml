@@ -68,10 +68,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radarView"
-        tools:context=".view.fragment.TransmissionSendFragment"
+        tools:context=".thumbnail.fragment.TransmissionSendFragment"
         tools:listitem="@layout/item_send" />
 
-    <com.bytedance.xly.view.view.RadarScanView
+    <com.bytedance.xly.thumbnail.view.RadarScanView
         android:id="@+id/radarView"
         android:layout_width="160dp"
         android:layout_height="160dp"

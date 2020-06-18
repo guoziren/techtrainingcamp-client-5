@@ -14,19 +14,18 @@
             android:launchMode="singleTop"/>
         <activity android:name=".filetransfer.view.ReceicerActivity" />
         <activity android:name=".filetransfer.view.SenderActivity" />
-        <activity android:name=".BigPicture.Bianji" />
-        <activity android:name=".BigPicture.Tuya" />
+        <activity android:name=".bigpicture.Bianji" />
+        <activity android:name=".bigpicture.Tuya" />
         <activity android:name=".tuya.ui.BLScrawlActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".BigPicture.Main2Activity"
+            android:name=".bigpicture.Main2Activity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".view.activity.MainActivity" />
         <activity
-            android:name=".view.activity.PhotoActivity"
+            android:name=".thumbnail.activity.PhotoActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

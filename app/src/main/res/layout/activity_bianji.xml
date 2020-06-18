@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BigPicture.Bianji">
+    tools:context=".bigpicture.Bianji">
 
-    <com.bytedance.xly.BigPicture.CropImageView
+    <com.bytedance.xly.bigpicture.CropImageView
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -1,6 +1,6 @@
 package com.bytedance.xly.filetransfer.presenter;
 
-import com.bytedance.xly.filetransfer.model.FileSender;
+import com.bytedance.xly.filetransfer.model.FileSenderRunnable;
 import com.bytedance.xly.filetransfer.model.entity.FileInfo;
 import com.bytedance.xly.util.TransferUtil;
 
@@ -15,8 +15,8 @@ import java.util.List;
 public class FileSenderPresenter {
     public void  initSendServer(List<FileInfo> fileInfos,String serverIp){
         for (FileInfo fileInfo : fileInfos) {
-            FileSender fileSender = new FileSender(serverIp,TransferUtil.DEFAULT_SERVER_PORT,fileInfo);
-            fileSender.setOnSendListener(new FileSender.OnSendListener() {
+            FileSenderRunnable fileSenderRunnable = new FileSenderRunnable(serverIp,TransferUtil.DEFAULT_SERVER_PORT,fileInfo);
+            fileSenderRunnable.setOnSendListener(new FileSenderRunnable.OnSendListener() {
                 @Override
                 public void onStart() {
 
@@ -37,7 +37,7 @@ public class FileSenderPresenter {
 
                 }
             });
-            TransferUtil.getInstance().getExecutorService().execute(fileSender);
+            TransferUtil.getInstance().getExecutorService().execute(fileSenderRunnable);
         }
 
         //开启传送文件

@@ -184,17 +184,6 @@ public class ReceiverUDP {
     DatagramSocket mDatagramSocket;
     private void startFileReceiverServer(int serverPort) throws Exception{
         LogUtil.d(TAG, "startFileReceiverServer: 开启socket接收 发送方发来的建立连接的消息");
-
-//        //网络连接上，无法获取IP的问题
-//        int count = 0;
-//        String localAddress = WifiMgr.getInstance(getContext()).getHotspotLocalIpAddress();
-//        while(localAddress.equals(Constant.DEFAULT_UNKOWN_IP) && count <  Constant.DEFAULT_TRY_TIME){
-//            Thread.sleep(1000);
-//            localAddress = WifiMgr.getInstance(getContext()).getHotspotLocalIpAddress();
-//            Log.i(TAG, "receiver get local Ip ----->>>" + localAddress);
-//            count ++;
-//        }
-
         mDatagramSocket = new DatagramSocket(TransferUtil.DEFAULT_SERVER_COM_PORT);
         byte[] receiveData = new byte[1024];
         byte[] sendData = null;
@@ -208,7 +197,7 @@ public class ReceiverUDP {
             int port = receivePacket.getPort();
 //            Log.i(TAG, "Get the msg from FileReceiver######>>>" + Constant.MSG_FILE_RECEIVER_INIT);
             if(msg != null && msg.startsWith(TransferUtil.MSG_FILE_RECEIVER_INIT)){
-                Log.i(TAG, "Get the msg from FileReceiver######>>>" + TransferUtil.MSG_FILE_RECEIVER_INIT);
+                LogUtil.d(TAG, "Get the msg from FileReceiver######>>>" + TransferUtil.MSG_FILE_RECEIVER_INIT);
                 mReceiverNotifyUDPListener.onReceiveFileUI();
                 // 进入文件接收列表界面 (文件接收列表界面需要 通知 文件发送方发送 文件开始传输UDP通知)
 //                mainHandler.obtainMessage(TransmissionReceivFragment.MSG_TO_FILE_RECEIVER_UI, new IpPortInfo(inetAddress, port)).sendToTarget();
@@ -219,8 +208,6 @@ public class ReceiverUDP {
                 mDatagramSocket.send(sendPacket);
             }else{ //接收发送方的 文件列表
                 if(msg != null){
-//                    FileInfo fileInfo = FileInfo.toObject(msg);
-                    System.out.println("Get the FileInfo from FileReceiver######>>>" + msg);
                     parseFileInfo(msg);
                 }
             }
@@ -235,7 +222,6 @@ public class ReceiverUDP {
     private void parseFileInfo(String msg) {
         FileInfo fileInfo = FileInfo.toObject(msg);
         if(fileInfo != null && fileInfo.getFilePath() != null){
-//            AppContext.getAppContext().addReceiverFileInfo(fileInfo);
             TransferUtil.getInstance().addReceiveFileInfo(fileInfo);
         }
     }

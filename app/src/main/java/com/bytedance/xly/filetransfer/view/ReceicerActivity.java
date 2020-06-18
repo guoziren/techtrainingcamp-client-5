@@ -17,7 +17,7 @@ import com.bytedance.xly.filetransfer.IReceiverViewCallback;
 import com.bytedance.xly.filetransfer.presenter.ReceiverPresenter;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.SystemInformationUtil;
-import com.bytedance.xly.view.view.RadarScanView;
+import com.bytedance.xly.thumbnail.view.RadarScanView;
 
 public class ReceicerActivity extends AppCompatActivity implements IReceiverViewCallback {
     private static final String TAG = "ReceicerActivity";
