@@ -105,7 +105,7 @@ public class ReceiveActivity extends AppCompatActivity implements IReceiverViewC
 
         mReceiverPresenter = new ReceiverPresenter(this);
         //广播ip
-//        mReceiverPresenter.waitSender();
+        mReceiverPresenter.waitSender();
         //等待接收方通知
         mReceiverPresenter.waitNotificationToConnect();
     }
