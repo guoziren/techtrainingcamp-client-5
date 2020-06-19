@@ -16,10 +16,11 @@ import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
+import com.bytedance.xly.util.LogUtil;
 
 
 public class ScaleView extends androidx.appcompat.widget.AppCompatImageView implements OnGlobalLayoutListener, OnScaleGestureListener, OnTouchListener {
-
+    private static final String TAG = "ScaleView";
     /** 表示是否只有一次加载 */
     private boolean isOnce = false;
     /** 初始时的缩放值 */
@@ -43,7 +44,6 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
     private GestureDetector mGesture;
     // 是否自动缩放
     private boolean isAutoScale;
-    private static final String TAG = "ScaleView";
     public ScaleView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
@@ -356,7 +356,7 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "onTouch: ");
+        LogUtil.d(TAG, "onTouch: ");
 
         // 把事件传递给双击手势
         if (mGesture.onTouchEvent(event)) {

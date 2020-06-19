@@ -168,7 +168,7 @@ public class ReceiverUDP {
                 try {
                     startFileReceiverServer(TransferUtil.DEFAULT_SERVER_COM_PORT);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogUtil.d(TAG, "run: " + e.toString());
                 }
             }
         };

@@ -5,11 +5,16 @@ import com.bytedance.xly.filetransfer.model.entity.FileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PrimitiveIterator;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
  * 包名：      com.bytedance.xly.filetransfer.util
@@ -41,8 +46,21 @@ public class TransferUtil {
     public static final String MSG_FILE_RECEIVER_INIT_SUCCESS = "MSG_FILE_RECEIVER_INIT_SUCCESS";
     public static final String MSG_FILE_SENDER_START = "MSG_FILE_SENDER_START";
 
+    //线程池
+    private static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private static final int KEEP_ALIVE_TIME = 10;
+    private static final BlockingQueue<Runnable> sTaskQueue = new LinkedBlockingQueue<>(128);
+    private static final ThreadFactory sThreadFactory = new ThreadFactory() {
+        private final AtomicInteger mCount = new AtomicInteger(1);
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r,"PhotoAlbum #" + mCount.getAndIncrement());
+        }
+    };
 
-    private ExecutorService mExecutorService = new ThreadPoolExecutor(1,20,3, TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
+    private ExecutorService mExecutorService = new ThreadPoolExecutor(NUMBER_OF_CORES,NUMBER_OF_CORES *2,
+            KEEP_ALIVE_TIME, TimeUnit.SECONDS,sTaskQueue,sThreadFactory);
+
 
     public ExecutorService getExecutorService() {
         return mExecutorService;

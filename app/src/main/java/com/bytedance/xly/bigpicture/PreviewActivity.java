@@ -49,7 +49,7 @@ public class PreviewActivity extends AppCompatActivity {
 
     private ScaleView[] mScaleViews;
     private ScalePagerAdapter mAdapter;
-    private static final String TAG = "Main2Activity";
+    private static final String TAG = "PreviewActivity";
     private boolean isFirst=true;
     private TextView mBtnTuya;
     private TextView mBtnCaiJian;

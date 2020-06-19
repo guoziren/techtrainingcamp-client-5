@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".application.PhotoApplication"
         android:icon="@mipmap/album"
         android:label="@string/app_name"
         android:supportsRtl="true"

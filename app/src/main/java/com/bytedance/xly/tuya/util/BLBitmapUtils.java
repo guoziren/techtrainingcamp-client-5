@@ -14,9 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by Administrator on 2017/4/16.
- */
 
 public class BLBitmapUtils {
     /**
