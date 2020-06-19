@@ -126,9 +126,8 @@ public class FileSenderRunnable extends BaseTransfer implements Runnable {
             mOutputStream.write(bytes,0,len);
             total = total + len;
             eTime = System.currentTimeMillis();
-            Thread.sleep(50);
             //大于下面的数值才进行一次监听,更新进度
-            if (eTime - sTime > 300){
+            if (eTime - sTime > 150){
                 sTime = eTime;
                 if (mOnSendListener != null)mOnSendListener.onProgress(total,size);
             }

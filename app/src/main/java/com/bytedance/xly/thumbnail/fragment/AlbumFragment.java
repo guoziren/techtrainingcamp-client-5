@@ -197,7 +197,6 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
                         choosedCache.remove(index);
                     }
                 }
-//                        Log.d(TAG, "onItemClick: choosedCacheSize:"+mbList.size());
             }
         } else {
             int index = mData.indexOf(timeBean);
@@ -225,5 +224,19 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK){
+            LogUtil.d(TAG, "onActivityResult: RESULT_OK");
+            if (requestCode == PhotoActivity.REQUEST_RECEIVE_FILE){
+                //成功收到了文件，更新相册
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAlbumPresenter.getDateAlbumList(getActivity());
+            }
+        }
+
     }
 }

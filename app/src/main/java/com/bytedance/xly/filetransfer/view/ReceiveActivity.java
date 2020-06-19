@@ -1,6 +1,7 @@
 package com.bytedance.xly.filetransfer.view;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -15,33 +16,41 @@ import android.widget.TextView;
 import com.bytedance.xly.R;
 import com.bytedance.xly.filetransfer.IReceiverViewCallback;
 import com.bytedance.xly.filetransfer.presenter.ReceiverPresenter;
+import com.bytedance.xly.thumbnail.activity.PhotoActivity;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.SystemInformationUtil;
 import com.bytedance.xly.thumbnail.view.RadarScanView;
 
-public class ReceicerActivity extends AppCompatActivity implements IReceiverViewCallback {
+import java.lang.ref.WeakReference;
+
+public class ReceiveActivity extends AppCompatActivity implements IReceiverViewCallback {
     private static final String TAG = "ReceicerActivity";
     private TextView mTvTop;
     private ReceiverPresenter mReceiverPresenter;
 
     private static final int TIMEOUT = 0;
     public static final int MSG_TO_FILE_RECEIVER_UI = 1;
-    private Handler mHandler = new Handler(){
+    private Handler mHandler ;
+    private  static class ReceiveHandler extends Handler{
+        private WeakReference<ReceiveActivity> mWeakReference;
+        public ReceiveHandler(ReceiveActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
         @Override
         public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
+            ReceiveActivity activity = mWeakReference.get();
             switch (msg.what){
                 case TIMEOUT:
-                    mTvTop.setClickable(true);
-                    mRadarView.stopScan();
-                    mTvTop.setText("继续等待");
+                    activity.mTvTop.setClickable(true);
+                    activity.mRadarView.stopScan();
+                    activity.mTvTop.setText("继续等待");
                     break;
                 case MSG_TO_FILE_RECEIVER_UI:
                     //跳转到文件接收列表UI
-                    Intent intent = new Intent(ReceicerActivity.this, FileReceiverActivity.class);
+                    Intent intent = new Intent(activity, FileReceiverActivity.class);
 //                    intent.putExtras(bundle);
-                    ReceicerActivity.this.startActivity(intent);
-                    finish();
+                    activity.startActivityForResult(intent, PhotoActivity.REQUEST_RECEIVE_FILE);
+//                    activity.finish();
                     break;
 
             }
@@ -91,11 +100,12 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
         tv_ip.setText("本机IP地址:" + SystemInformationUtil.getIpAddress(this));
 
         mRadarView = findViewById(R.id.radarView);
+        mHandler = new ReceiveHandler(this);
         mRadarView.startScan();
 
         mReceiverPresenter = new ReceiverPresenter(this);
         //广播ip
-        mReceiverPresenter.waitSender();
+//        mReceiverPresenter.waitSender();
         //等待接收方通知
         mReceiverPresenter.waitNotificationToConnect();
     }
@@ -119,4 +129,15 @@ public class ReceicerActivity extends AppCompatActivity implements IReceiverView
         mReceiverPresenter.destroy();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK){
+            LogUtil.d(TAG, "onActivityResult: RESULT_OK");
+            if (requestCode == PhotoActivity.REQUEST_RECEIVE_FILE){
+                setResult(RESULT_OK);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        finish();
+    }
 }

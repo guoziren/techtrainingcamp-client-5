@@ -12,7 +12,7 @@
             android:launchMode="singleTop"></activity>
         <activity android:name=".filetransfer.view.FileSenderActivity"
             android:launchMode="singleTop"/>
-        <activity android:name=".filetransfer.view.ReceicerActivity" />
+        <activity android:name=".filetransfer.view.ReceiveActivity" />
         <activity android:name=".filetransfer.view.SenderActivity" />
         <activity android:name=".bigpicture.Bianji" />
         <activity android:name=".bigpicture.Tuya" />

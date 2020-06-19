@@ -126,7 +126,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
             fos.write(bytes, 0, len);
             total = total + len;
             eTime = System.currentTimeMillis();
-            if (eTime - sTime > 300) { //大于500ms 才进行一次监听
+            if (eTime - sTime > 150) { //大于150ms 才进行一次监听
                 sTime = eTime;
                 if (mOnReceiveListener != null) mOnReceiveListener.onProgress(total, fileSize);
             }
