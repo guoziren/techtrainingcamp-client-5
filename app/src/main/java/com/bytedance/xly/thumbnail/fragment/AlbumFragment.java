@@ -90,6 +90,9 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             //    showConfirmDelete();
             }
 
+            /**
+             * 点击进入搜索接收方的界面
+             */
             @Override
             public void onShareClick() {
                 LogUtil.d(TAG, "onShareClick: ");
@@ -222,6 +225,5 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Override
     public void onResume() {
         super.onResume();
-
     }
 }
