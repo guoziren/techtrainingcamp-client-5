@@ -36,7 +36,7 @@ public class ReceiverUDP {
     /**
      * 等待发送方的1次等待时间
      */
-    private static final int WAITTIME = 8000;
+    private static final int WAITTIME = 10000;
 
     public void waitSender(ReceiverUDPListener listener) {
         mReceiverUDPListener = listener;
