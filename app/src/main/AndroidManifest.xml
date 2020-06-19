@@ -22,7 +22,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".bigpicture.Main2Activity"
+            android:name=".bigpicture.PreviewActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".thumbnail.activity.PhotoActivity"

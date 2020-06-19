@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bytedance.xly.bigpicture.Main2Activity;
+import com.bytedance.xly.bigpicture.PreviewActivity;
 import com.bytedance.xly.R;
 import com.bytedance.xly.thumbnail.adapter.DateAlbumAdapter;
 import com.bytedance.xly.filetransfer.model.FileSenderRunnable;
@@ -203,10 +203,10 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             DateAlbumBean ab = mData.get(index);
             index = ab.getItemList().indexOf(albumBean);
             if (index >= 0) {
-                Intent intent = new Intent(getContext(), Main2Activity.class);
+                Intent intent = new Intent(getContext(), PreviewActivity.class);
                 intent.putExtra("picturePath", (Serializable) ab.getItemList());
                 intent.putExtra("CurrentPage",index);
-                Objects.requireNonNull(getContext()).startActivity(intent);//去激活Main2Activity
+                Objects.requireNonNull(getContext()).startActivity(intent);//去激活PreviewActivity
             }
         }
     }

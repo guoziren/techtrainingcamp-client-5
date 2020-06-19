@@ -20,6 +20,7 @@ import com.bytedance.xly.thumbnail.activity.PhotoActivity;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.SystemInformationUtil;
 import com.bytedance.xly.thumbnail.view.RadarScanView;
+import com.bytedance.xly.util.TransferUtil;
 
 import java.lang.ref.WeakReference;
 

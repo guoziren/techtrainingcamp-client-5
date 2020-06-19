@@ -1,9 +1,6 @@
 package com.bytedance.xly.util;
 
-/**
- * Created by mayubao on 2016/11/11.
- * Contact me 345269374@qq.com
- */
+
 public class TimeUtils {
 
     /**

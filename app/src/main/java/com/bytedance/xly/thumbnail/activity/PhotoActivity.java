@@ -17,6 +17,7 @@ import com.bytedance.xly.filetransfer.view.ReceiveActivity;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.ToastUtil;
 import com.bytedance.xly.thumbnail.fragment.AlbumFragment;
+import com.bytedance.xly.util.TransferUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,7 +59,6 @@ public class PhotoActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_receive:
                 Intent intent = new Intent(this, ReceiveActivity.class);
-//                startActivity(intent);
                 startActivityForResult(intent,REQUEST_RECEIVE_FILE);
                 break;
         }

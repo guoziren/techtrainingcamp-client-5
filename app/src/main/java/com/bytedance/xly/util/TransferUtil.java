@@ -32,8 +32,7 @@ public class TransferUtil {
      * UDP广播端口
      */
     public static final int DEFAULT_SERVER_BROADCAST_PORT = 8181;
-    public static  long begin = 0;
-    public static  long end = 0;
+
 
     /**
      * 文件发送方 与 文件接收方 通信信息
