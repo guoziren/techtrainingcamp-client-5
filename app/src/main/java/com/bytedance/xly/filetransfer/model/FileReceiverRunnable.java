@@ -1,7 +1,5 @@
 package com.bytedance.xly.filetransfer.model;
 
-import android.graphics.Bitmap;
-
 import com.bytedance.xly.filetransfer.BaseTransfer;
 import com.bytedance.xly.filetransfer.model.entity.FileInfo;
 import com.bytedance.xly.util.FileUtils;

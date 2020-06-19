@@ -58,7 +58,7 @@ public class TransferUtil {
         }
     };
 
-    private ExecutorService mExecutorService = new ThreadPoolExecutor(NUMBER_OF_CORES,NUMBER_OF_CORES *2,
+    private ExecutorService mExecutorService = new ThreadPoolExecutor(NUMBER_OF_CORES,NUMBER_OF_CORES * 3,
             KEEP_ALIVE_TIME, TimeUnit.SECONDS,sTaskQueue,sThreadFactory);
 
 
