@@ -14,12 +14,7 @@ import android.view.View;
 import com.bytedance.xly.R;
 
 
-/**
- * 自定义RadarView
- *
- * Created by mayubao on 2016/11/26.
- * Contact me 345269374@qq.com
- */
+
 public class RadarScanView extends View {
 
     private static final int MSG_RUN = 1;
@@ -56,20 +51,21 @@ public class RadarScanView extends View {
      * 初始化
      */
     private void init(Context context){
-        mCircleColor = context.getResources().getColor(R.color.transparent_white);
-        mArcColor = context.getResources().getColor(R.color.transparent_white);
-        mLineColor = context.getResources().getColor(R.color.transparent_white);
+        mCircleColor = context.getResources().getColor(R.color.radar_begin_color);
+        mArcColor = context.getResources().getColor(R.color.radar_begin_color);
+        mLineColor = context.getResources().getColor(R.color.radar_begin_color);
 
-        mArcStartColor = context.getResources().getColor(R.color.transparent_white);
+        mArcStartColor = context.getResources().getColor(R.color.radar_begin_color);
         mArcEndColor = context.getResources().getColor(android.R.color.transparent);
 
-
+        //抗锯齿
         mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mArcPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         mCirclePaint.setColor(mCircleColor);
         mCirclePaint.setStyle(Paint.Style.STROKE);
         mCirclePaint.setStrokeWidth(1.f);
+
 
         mArcPaint.setColor(mArcColor);
         mArcPaint.setStyle(Paint.Style.FILL);
@@ -90,7 +86,6 @@ public class RadarScanView extends View {
         setMeasuredDimension(size, size);
         mRectF.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
 
-//        mArcPaint.setShader(new SweepGradient(size / 2, size / 2, Color.GRAY, Color.BLACK));
         mArcPaint.setShader(new SweepGradient(size / 2, size / 2, mArcStartColor, mArcEndColor));
     }
 
@@ -99,9 +94,13 @@ public class RadarScanView extends View {
         int centerX = getMeasuredWidth() / 2;
         int centerY = getMeasuredHeight() / 2;
 
+        //保存当前状态
         canvas.save();
+        //选择坐标系
         canvas.rotate(mSweep, centerX, centerY);
+        //画圆弧
         canvas.drawArc(mRectF, 0, mSweep, true, mArcPaint);
+        //恢复到上次保存的状态,这样的结果每次坐标系起点都是3点钟方向,因为mSweep初始为0
         canvas.restore();
 
         canvas.drawLine(0, centerY, getMeasuredWidth(), centerY, mLinePaint);
@@ -109,6 +108,7 @@ public class RadarScanView extends View {
 
         canvas.drawCircle(centerX, centerY, centerX / 2, mCirclePaint);
         canvas.drawCircle(centerX, centerY, centerX, mCirclePaint);
+
     }
 
     private boolean swicth = true;

@@ -7,6 +7,7 @@ import com.bytedance.xly.filetransfer.model.entity.FileInfo;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.TimeUtils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,8 +104,8 @@ public class FileSenderRunnable extends BaseTransfer implements Runnable {
     public void parseBody() throws Exception {
         long size = mFileInfo.getSize();
         LogUtil.d(TAG, "parseBody: size " + size + "B");
-        InputStream fis = new FileInputStream(new File(mFileInfo.getFilePath()));
 
+        BufferedInputStream bis =  new BufferedInputStream(new FileInputStream(new File(mFileInfo.getFilePath())));
         //记录文件开始写入时间
         long startTime = System.currentTimeMillis();
 
@@ -113,7 +114,7 @@ public class FileSenderRunnable extends BaseTransfer implements Runnable {
         int len = 0;
         long sTime = System.currentTimeMillis();
         long eTime = 0;
-        while ((len = fis.read(bytes)) != -1){
+        while ((len = bis.read(bytes)) != -1){
             //暂停传输的代码,暂不实现该功能
 //            synchronized (mObject){
 //                if (mIsPaused){
@@ -136,6 +137,7 @@ public class FileSenderRunnable extends BaseTransfer implements Runnable {
         long endTime = System.currentTimeMillis();
         LogUtil.d(TAG, "parseBody: " + TimeUtils.formatTime(endTime - startTime)  + "  write total = " + total / 1000 + "kb");
         //每一次socket连接就是一个通信，如果当前Outputstream不关闭的话，FileReceiver端会阻塞在那里
+        bis.close();
         mOutputStream.flush();
         mOutputStream.close();
 
