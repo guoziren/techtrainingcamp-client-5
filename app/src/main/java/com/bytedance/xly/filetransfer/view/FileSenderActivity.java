@@ -20,6 +20,7 @@ import com.bytedance.xly.filetransfer.presenter.FileSenderPresenter;
 import com.bytedance.xly.util.TransferUtil;
 import com.bytedance.xly.util.LogUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,19 +28,27 @@ public class FileSenderActivity extends AppCompatActivity {
     private static final String TAG = "FileSenderActivity";
     TextView tv_title;
     private FileSenderPresenter mPresenter;
-
+    private Handler mHandler;
     private String mServerIp;
 
 
     public static final int MSG_UPDATE_FILE_INFO = 0X6666;
 
-    private  Handler mHandler = new Handler(){
+    /**
+     * handler更新ui
+     */
+    private static class FileSenderHandler extends Handler {
+        private WeakReference<FileSenderActivity> mWeakReference;
+        public FileSenderHandler(FileSenderActivity fileSenderActivity) {
+            mWeakReference = new WeakReference<>(fileSenderActivity);
+        }
+
         @Override
         public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
+            FileSenderActivity activity = mWeakReference.get();
             if(msg.what == MSG_UPDATE_FILE_INFO){
-                if(mFileSenderAdapter != null)
-                    mFileSenderAdapter.setDataAndNotify(TransferUtil.getInstance().getSendFileInfos());
+                if(activity.mFileSenderAdapter != null)
+                    activity.mFileSenderAdapter.setDataAndNotify(TransferUtil.getInstance().getSendFileInfos());
             }
         }
     };
@@ -71,6 +80,7 @@ public class FileSenderActivity extends AppCompatActivity {
         tv_title = findViewById(R.id.tv_title);
         tv_title.setVisibility(View.VISIBLE);
         tv_title.setText(getResources().getString(R.string.title_file_sender));
+        mHandler = new FileSenderHandler(this);
         mPresenter = new FileSenderPresenter();
         initSendServer(TransferUtil.getInstance().getSendFileInfos(),mServerIp);
     }

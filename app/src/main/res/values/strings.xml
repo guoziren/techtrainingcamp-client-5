@@ -52,7 +52,7 @@
     <string name="tip_permission_denied_and_not_get_wifi_info_list">权限拒绝，无法获取附近的网络列表</string>
     <string name="caijian">裁剪</string>
     <string name="tuya">涂鸦</string>
-    <string name="receive_directory">文件保存在 SD卡根目录下chakanqi目录中</string>
+    <string name="receive_directory">文件保存在</string>
 
 
 </resources>

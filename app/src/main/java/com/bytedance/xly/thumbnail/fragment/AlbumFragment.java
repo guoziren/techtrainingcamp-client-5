@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bytedance.xly.bigpicture.Main2Activity;
+import com.bytedance.xly.bigpicture.PreviewActivity;
 import com.bytedance.xly.R;
 import com.bytedance.xly.thumbnail.adapter.DateAlbumAdapter;
 import com.bytedance.xly.filetransfer.model.FileSenderRunnable;
@@ -90,6 +90,9 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             //    showConfirmDelete();
             }
 
+            /**
+             * 点击进入搜索接收方的界面
+             */
             @Override
             public void onShareClick() {
                 LogUtil.d(TAG, "onShareClick: ");
@@ -194,17 +197,16 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
                         choosedCache.remove(index);
                     }
                 }
-//                        Log.d(TAG, "onItemClick: choosedCacheSize:"+mbList.size());
             }
         } else {
             int index = mData.indexOf(timeBean);
             DateAlbumBean ab = mData.get(index);
             index = ab.getItemList().indexOf(albumBean);
             if (index >= 0) {
-                Intent intent = new Intent(getContext(), Main2Activity.class);
+                Intent intent = new Intent(getContext(), PreviewActivity.class);
                 intent.putExtra("picturePath", (Serializable) ab.getItemList());
                 intent.putExtra("CurrentPage",index);
-                Objects.requireNonNull(getContext()).startActivity(intent);//去激活Main2Activity
+                Objects.requireNonNull(getContext()).startActivity(intent);//去激活PreviewActivity
             }
         }
     }
@@ -222,6 +224,19 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK){
+            LogUtil.d(TAG, "onActivityResult: RESULT_OK");
+            if (requestCode == PhotoActivity.REQUEST_RECEIVE_FILE){
+                //成功收到了文件，更新相册
+                mProgressBar.setVisibility(View.VISIBLE);
+                mAlbumPresenter.getDateAlbumList(getActivity());
+            }
+        }
 
     }
 }

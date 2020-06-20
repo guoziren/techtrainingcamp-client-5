@@ -13,7 +13,7 @@
 <!--    <color name="transparent">@android:color/transparent</color>-->
     <color name="transparent">#000000ff</color>
 <!--    <color name="transparent_white">#44ffffff</color>-->
-    <color name="transparent_white">#440000ff</color>
+    <color name="radar_begin_color">#440000ff</color>
 
     <color name="holo_blue_light">@android:color/holo_blue_light</color>
     <color name="hole_gray_blue">#cc81d4fa</color>

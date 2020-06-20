@@ -11,7 +11,9 @@ import com.bytedance.xly.thumbnail.model.IDataCallback;
 import com.bytedance.xly.thumbnail.model.bean.AlbumBean;
 import com.bytedance.xly.thumbnail.model.bean.DateAlbumBean;
 import com.bytedance.xly.thumbnail.model.IDateAlbumModel;
+import com.bytedance.xly.util.DateUtil;
 import com.bytedance.xly.util.LogUtil;
+import com.bytedance.xly.util.TimeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,59 +56,67 @@ public class DateAlbumModelImpl  implements IDateAlbumModel {
 
     }
 
+    /**
+     * 检索image视图返回所有图片构造成按时间分类的List
+     */
     class GetDataTask extends AsyncTask<Context,Void,List<DateAlbumBean>>{
 
         @Override
         protected List<DateAlbumBean> doInBackground(Context... contexts) {
-            long begin = System.currentTimeMillis();
             List<DateAlbumBean> mData = new ArrayList<>();
             Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             ContentResolver contentResolver = contexts[0].getContentResolver();
             String[] projection = new String[]{MediaStore.Images.Media.DATA,MediaStore.Images.Media.DATE_TAKEN,MediaStore.Images.Thumbnails.DATA};
-//            Cursor cursor = contentResolver.query(uri, projection, null, null, null);
-            Cursor cursor = contentResolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_TAKEN+" desc");
-            if (cursor == null || cursor.getCount() <= 0) {
-                return null; // 没有图片
-            }
-            long before = -1;
+            Cursor cursor = null;
             DateAlbumBean datealbumbean = null;
-            LogUtil.d(TAG, "cursor size: " + cursor.getCount());
-            while (cursor.moveToNext()) {
-                int index = cursor.getColumnIndexOrThrow(projection[0]);
-                int index_data_taken = cursor.getColumnIndexOrThrow(projection[1]);
-                int index_data_thumbnails = cursor.getColumnIndexOrThrow(projection[2]);
-                String path = cursor.getString(index); // 图片路径
-                String data_taken = cursor.getString(index_data_taken); // 图片添加时间
-                String data_thumbnails = cursor.getString(index_data_thumbnails); // 图片缩略图路径
-                File file = new File(path);
-                File file_thumb = new File(data_thumbnails);
-                if (file.exists() && file_thumb.exists()) {
-                    AlbumBean albumBean = new AlbumBean();
-                    albumBean.setThumbPath(data_thumbnails);
-                    if (data_taken == null){
-                        continue;
-                    }
+            try {
+                cursor = contentResolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_TAKEN + " desc");
+                if (cursor == null || cursor.getCount() <= 0) {
+                    return null; // 没有图片
+                }
+                long before = -1;
+                LogUtil.d(TAG, "cursor size: " + cursor.getCount());
 
-                    long date = Long.parseLong(data_taken);
-                    albumBean.setDate(date);
-                    albumBean.setPath(path);
+                while (cursor.moveToNext()) {
+                    String path = cursor.getString(cursor.getColumnIndex(projection[0])); // 图片路径
+                    long data_taken = cursor.getLong(cursor.getColumnIndex(projection[1])); // 图片拍摄时间
+                    String data_thumbnails = cursor.getString(cursor.getColumnIndex(projection[2])); // 图片缩略图路径
 
-                    if (date / DateAlbumBean.day != before / DateAlbumBean.day){
-                        if (before != -1){
-                            mData.add(datealbumbean);
+                    File file = new File(path);
+                    File file_thumb = new File(data_thumbnails);
+                    if (file.exists() && file_thumb.exists()) {
+                        AlbumBean albumBean = new AlbumBean();
+                        albumBean.setThumbPath(data_thumbnails);
+                        if (data_taken < 0) {
+                            continue;
                         }
-                        before = date;
-                        //日期不一样的时候之前一天的存入mData,并new DateAlbumBean
-                        datealbumbean = new DateAlbumBean();
-                        datealbumbean.setDate(date);
-                        datealbumbean.getItemList().add(albumBean);
-                    }else{
-                       datealbumbean.getItemList().add(albumBean);
+                        albumBean.setDate(data_taken);
+                        albumBean.setPath(path);
+
+                        if (data_taken / DateAlbumBean.day != before / DateAlbumBean.day) {
+                            if (before != -1) {
+                                mData.add(datealbumbean);
+                            }
+                            before = data_taken;
+                            //日期不一样的时候之前一天的存入mData,并new DateAlbumBean
+                            datealbumbean = new DateAlbumBean();
+                            datealbumbean.setDate(data_taken);
+                            datealbumbean.getItemList().add(albumBean);
+                        } else {
+                            datealbumbean.getItemList().add(albumBean);
+                        }
                     }
+                }
+            }catch (Exception e){
+                return null;
+            }finally {
+                if (cursor != null){
+                    cursor.close();
                 }
             }
             mData.add(datealbumbean);
             sortList(mData);
+            cursor.close();
             return mData;
         }
 

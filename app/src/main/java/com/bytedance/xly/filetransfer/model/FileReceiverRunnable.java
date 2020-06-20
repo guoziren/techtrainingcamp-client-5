@@ -1,13 +1,13 @@
 package com.bytedance.xly.filetransfer.model;
 
-import android.graphics.Bitmap;
-
 import com.bytedance.xly.filetransfer.BaseTransfer;
 import com.bytedance.xly.filetransfer.model.entity.FileInfo;
 import com.bytedance.xly.util.FileUtils;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.TimeUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
      * Socket的输入输出流
      */
     private Socket mSocket;
-    private InputStream mInputStream;
+    private BufferedInputStream mBis;
 
     /**
      * 传送文件的信息
@@ -65,7 +65,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
     @Override
     public void init() throws Exception {
         if (this.mSocket != null) {
-            this.mInputStream = mSocket.getInputStream();
+            this.mBis = new BufferedInputStream(mSocket.getInputStream());
         }
     }
 
@@ -76,7 +76,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
         int headTotal = 0;
         int readByte = -1;
         //开始读取header
-        while ((readByte = mInputStream.read()) != -1) {
+        while ((readByte = mBis.read()) != -1) {
             headerBytes[headTotal] = (byte) readByte;
             headTotal++;
             if (headTotal == headerBytes.length) {
@@ -100,7 +100,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
         long fileSize = mFileInfo.getSize();
         File destination = FileUtils.gerateLocalFile(mFileInfo.getFilePath());
         OutputStream fos = new FileOutputStream(destination);
-
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
         //记录文件开始写入时间
         long startTime = System.currentTimeMillis();
 
@@ -110,7 +110,7 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
 
         long sTime = System.currentTimeMillis();
         long eTime = 0;
-        while ((len = mInputStream.read(bytes)) != -1) {
+        while ((len = mBis.read(bytes)) != -1) {
             synchronized (LOCK) {
                 if (mIsPaused) {
                     try {
@@ -123,25 +123,25 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
             if (mIsStop){
                 throw new IOException("传输被中断");
             }
-            fos.write(bytes, 0, len);
+            bos.write(bytes, 0, len);
             total = total + len;
             eTime = System.currentTimeMillis();
-            if (eTime - sTime > 300) { //大于500ms 才进行一次监听
+            if (eTime - sTime > 150) { //大于150ms 才进行一次监听
                 sTime = eTime;
                 if (mOnReceiveListener != null) mOnReceiveListener.onProgress(total, fileSize);
             }
 
 
         }
-        fos.flush();
-        fos.close();
+        bos.flush();
+        bos.close();
         //记录文件结束写入时间
         long endTime = System.currentTimeMillis();
 
-        LogUtil.d(TAG, "FileReceiver body receive######>>>" + (TimeUtils.formatTime(endTime - startTime)));
-        LogUtil.d(TAG, "FileReceiver body receive######>>>" + total);
+        LogUtil.d(TAG, "FileReceiver body receive " + (TimeUtils.formatTime(endTime - startTime)));
+        LogUtil.d(TAG, "FileReceiver body receive " + total);
 
-        LogUtil.d(TAG, "parseBody######>>>end");
+        LogUtil.d(TAG, "parseBody end");
 
         if (mOnReceiveListener != null) mOnReceiveListener.onSuccess(mFileInfo,destination);
 
@@ -150,9 +150,9 @@ public class FileReceiverRunnable extends BaseTransfer implements Runnable {
     @Override
     public void finish() throws Exception {
          mIsFinished = true;
-        if (mInputStream != null) {
+        if (mBis != null) {
             try {
-                mInputStream.close();
+                mBis.close();
             } catch (IOException e) {
 
             }

@@ -26,7 +26,7 @@ public class SenderUDP implements ISenderUDP {
     private static final String TAG = "SenderUDP";
     private DatagramSocket udpSocket;
     private DatagramPacket udpPacket;
-    private static final int SOCKETTIMEOUT = 8000;//默认一次搜索的超时时间
+    private static final int SOCKETTIMEOUT = 10000;//默认一次搜索的超时时间
     private Runnable mRunnable;
     private String mReceiverIP;
     private List<String> mIPList = new ArrayList<>();

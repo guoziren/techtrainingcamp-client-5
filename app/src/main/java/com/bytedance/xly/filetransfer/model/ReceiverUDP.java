@@ -36,7 +36,7 @@ public class ReceiverUDP {
     /**
      * 等待发送方的1次等待时间
      */
-    private static final int WAITTIME = 8000;
+    private static final int WAITTIME = 10000;
 
     public void waitSender(ReceiverUDPListener listener) {
         mReceiverUDPListener = listener;
@@ -168,7 +168,7 @@ public class ReceiverUDP {
                 try {
                     startFileReceiverServer(TransferUtil.DEFAULT_SERVER_COM_PORT);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogUtil.d(TAG, "run: " + e.toString());
                 }
             }
         };

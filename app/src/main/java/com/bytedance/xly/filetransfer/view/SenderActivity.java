@@ -25,6 +25,7 @@ import com.bytedance.xly.util.SystemInformationUtil;
 import com.bytedance.xly.util.UITool;
 import com.bytedance.xly.thumbnail.view.RadarScanView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,27 +45,31 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
 
     private List<String> mIPList = null;
 
-    private Handler mHandler = new Handler(){
+    private Handler mHandler ;
+    private  static class SendHandler extends Handler{
+        private WeakReference<SenderActivity> mWeakReference;
+        public SendHandler(SenderActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
         @Override
         public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
+            SenderActivity activity = mWeakReference.get();
             switch (msg.what){
                 case SEARCH_SUCCESS:
-                    mAdapter.setDataAndNotify(mIPList);
+                    activity.mAdapter.setDataAndNotify(activity.mIPList);
                     break;
                 case SEARCH_FAILED:
                 case SEARCH_TIMEOUT:
-                    mRadarScanView.stopScan();
-                    mBtnWait.setClickable(true);
-                    mBtnWait.setText(R.string.str_search_go_on);
-                    mBtnWait.setTextColor(Color.parseColor("#aaaaaa"));
+                    activity.mRadarScanView.stopScan();
+                    activity.mBtnWait.setClickable(true);
+                    activity.mBtnWait.setText(R.string.str_search_go_on);
+                    activity.mBtnWait.setTextColor(Color.parseColor("#aaaaaa"));
                     break;
                 case START_FILE_TRANSFER_ACTIVITY:
-                    Intent intent = new Intent(SenderActivity.this, FileSenderActivity.class);
-                    intent.putExtra("serverIp",mServerIp);
-                    SenderActivity.this.startActivity(intent);
-
-                    finish();
+                    Intent intent = new Intent(activity, FileSenderActivity.class);
+                    intent.putExtra("serverIp",activity.mServerIp);
+                    activity.startActivity(intent);
+                    activity.finish();
                     break;
             }
         }
@@ -123,7 +128,7 @@ public class SenderActivity extends AppCompatActivity implements ISenderViewCall
         //雷达
         mRadarScanView = findViewById(R.id.radarView);
         mRadarScanView.startScan();
-
+        mHandler = new SendHandler(this);
         TextView tv_ip = findViewById(R.id.textv);
         String ip = SystemInformationUtil.getIpAddress(this);
         if (!TextUtils.isEmpty(ip)){

@@ -17,10 +17,13 @@
         android:divider="@null"
         android:padding="@dimen/activity_horizontal_margin"
         android:background="@color/white"/>
+
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/directory"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/directory"/>
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 </RelativeLayout>

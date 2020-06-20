@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bytedance.xly.R;
 
@@ -20,7 +21,7 @@ import androidx.annotation.Nullable;
  *
  */
 public class AlbumBottomMenu extends LinearLayout {
-    private ImageView iv_delete, iv_share;
+    private TextView  iv_share;
 
     //动画
     private TranslateAnimation mShowActionBottom;

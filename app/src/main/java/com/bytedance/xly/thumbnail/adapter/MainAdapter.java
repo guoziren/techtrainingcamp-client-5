@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bytedance.xly.bigpicture.Main2Activity;
+import com.bytedance.xly.bigpicture.PreviewActivity;
 import com.bytedance.xly.R;
 
 import java.io.File;
@@ -46,7 +46,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.Holder> {
         return holder;
     }
     private void actviteMain2(int position_num){
-        Intent intent = new Intent(mContext, Main2Activity.class);
+        Intent intent = new Intent(mContext, PreviewActivity.class);
         intent.putStringArrayListExtra("picturePath", (ArrayList<String>) mStrings);
         intent.putExtra("CurrentPage",position_num);
         mContext.startActivity(intent);//去激活Main2Activity

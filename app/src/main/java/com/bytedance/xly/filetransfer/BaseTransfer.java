@@ -13,7 +13,7 @@ public abstract class BaseTransfer implements Transferable {
     public static final String SPERATOR = "::";
 
     public static final int BYTE_SIZE_HEADER = 1024 ;
-    public static final int BYTE_SIZE_DATA = 1024 * 512;
+    public static final int BYTE_SIZE_DATA = 1024 * 8;
 
 
     /**

@@ -1,7 +1,6 @@
 package com.bytedance.xly.tuya.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -20,7 +19,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bytedance.xly.R;
-import com.bytedance.xly.filetransfer.view.ReceicerActivity;
 import com.bytedance.xly.tuya.model.BLPaint;
 import com.bytedance.xly.tuya.model.BLScrawlParam;
 import com.bytedance.xly.tuya.scrawl.DrawingBoardView;
@@ -34,8 +32,6 @@ import com.bytedance.xly.tuya.util.BLSelectedStateListDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.appcompat.widget.Toolbar;
 
 /**
  * Created by Administrator on 2017/4/21.

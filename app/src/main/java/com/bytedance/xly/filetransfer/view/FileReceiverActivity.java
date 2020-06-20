@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.bytedance.xly.util.LogUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,20 +34,29 @@ import java.util.List;
 public class FileReceiverActivity extends AppCompatActivity {
     private static final String TAG = "FileReceiverActivity";
     TextView tv_title;
-
+    private boolean isReceivedFile = false;//是否成功接收到了文件
     private FileSenderAdapter mFileReceiverAdapter;
     List<FileReceiverRunnable> mFileReceiverRunnables = new ArrayList<>();
+
     public static final int MSG_FILE_RECEIVER_INIT_SUCCESS = 0X4444;
     public static final int MSG_ADD_FILE_INFO = 0X5555;
     public static final int MSG_UPDATE_FILE_INFO = 0X6666;
 
-    Handler mHandler = new Handler(){
+    private Handler mHandler;
+    private static class FileReceiveHandler extends Handler{
+        private WeakReference<FileReceiverActivity> mWeakReference;
+        public FileReceiveHandler(FileReceiverActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            FileReceiverActivity activity = mWeakReference.get();
             if(msg.what == MSG_FILE_RECEIVER_INIT_SUCCESS){
 //                sendMsgToFileSender(mIpPortInfo);
             }else if(msg.what == MSG_UPDATE_FILE_INFO){
-                if(mFileReceiverAdapter != null) mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
+                if(activity.mFileReceiverAdapter != null)
+                    activity.mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
             }
         }
     };
@@ -67,12 +78,14 @@ public class FileReceiverActivity extends AppCompatActivity {
         mFileReceiverAdapter.setDataAndNotify(TransferUtil.getInstance().getReceiveFileInfos());
         LogUtil.d(TAG, "init: 待接收文件数量"  + TransferUtil.getInstance().getReceiveFileInfos().size() + "  待接收文件总大小" + TransferUtil.getInstance().getReceiveTotalSize());
 
+
         tv_title = findViewById(R.id.tv_title);
         tv_title.setVisibility(View.VISIBLE);
         tv_title.setText(getResources().getString(R.string.title_file_receive));
 
         TextView tv_directory = findViewById(R.id.directory);
-        tv_directory.setText(R.string.receive_directory);
+//        tv_directory.setText(getResources().getString(R.string.receive_directory) );
+        tv_directory.setText("");
 
         TextView tv_back = findViewById(R.id.tv_back);
         tv_back.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +94,7 @@ public class FileReceiverActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        mHandler = new FileReceiveHandler(this);
         initServer(); //启动接收服务
     }
 
@@ -89,7 +103,7 @@ public class FileReceiverActivity extends AppCompatActivity {
      */
     private void initServer() {
         mReceiverServer = new ServerRunnable(TransferUtil.DEFAULT_SERVER_PORT);
-        new Thread(mReceiverServer).start();
+        TransferUtil.getInstance().getExecutorService().execute(mReceiverServer);
 
     }
     /**
@@ -100,6 +114,7 @@ public class FileReceiverActivity extends AppCompatActivity {
         private int port;
 
 
+
         public ServerRunnable(int port) {
             this.port = port;
         }
@@ -107,6 +122,7 @@ public class FileReceiverActivity extends AppCompatActivity {
         @Override
         public void run() {
           LogUtil.d(TAG, "------>>>接收文件服务已经开启");
+          LogUtil.d(TAG, "run: " + TransferUtil.getInstance().getExecutorService());
             try {
                 if (serverSocket == null){
                     serverSocket = new ServerSocket();
@@ -157,6 +173,7 @@ public class FileReceiverActivity extends AppCompatActivity {
                             Uri uri = Uri.fromFile(destination);
                             intent.setData(uri);
                             FileReceiverActivity.this.sendBroadcast(intent);
+                            isReceivedFile = true;
                         }
 
                         @Override
@@ -195,7 +212,11 @@ public class FileReceiverActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (!hasFileSending()){
+            if (isReceivedFile){
+                setResult(RESULT_OK);
+            }
             super.onBackPressed();
+
         }else{
             new AlertDialog.Builder(this).setMessage("文件传输中,是否要中断传输")
                     .setPositiveButton("是", new DialogInterface.OnClickListener() {
