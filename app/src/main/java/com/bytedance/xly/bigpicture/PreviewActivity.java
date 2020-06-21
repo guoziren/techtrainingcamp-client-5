@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import android.content.Intent;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -228,7 +230,8 @@ public class PreviewActivity extends AppCompatActivity {
 
             ScaleView scaleView = new ScaleView(getApplicationContext());
             LogUtil.d(TAG, "instantiateItem: "+currentPage+" position:"+position);
-            scaleView.setImageURI(Uri.parse(picturePath.get(position).getPath()));
+            scaleView.setImageBitmap(load_picture(picturePath.get(position).getPath()));
+            //scaleView.setImageURI(Uri.parse(picturePath.get(position).getPath()));
             mScaleViews[position] = scaleView;
             container.addView(scaleView);
             return scaleView;
@@ -248,14 +251,12 @@ public class PreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mHandler = new ActivityHandler(this);
         this.picturePath = (List<AlbumBean>) intent.getSerializableExtra("picturePath");
+        Log.d(TAG, "initView: "+this.picturePath);
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);
-
         mScaleViews = new ScaleView[picturePath.size()];
         mAdapter = new ScalePagerAdapter();
-
         ViewPage.setAdapter(mAdapter);
-
         ViewPage.setCurrentItem(currentPage);
     }
 
@@ -268,8 +269,26 @@ public class PreviewActivity extends AppCompatActivity {
                 //上下滑动
                 PreviewActivity.this.finish();
             }
+
             return true;
         }
 
+    }
+    private Bitmap load_picture(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds =true;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        int Weight = options.outWidth;
+        int Height = options.outHeight;
+
+        DisplayMetrics dm2 = getResources().getDisplayMetrics();
+        int WeightRatio = Math.round((float)Weight/dm2.widthPixels);
+        int HeightRatio = Math.round((float)Height/dm2.heightPixels);
+
+        options.inSampleSize = 1+Math.max(WeightRatio,HeightRatio);
+        LogUtil.d(TAG,"inSampleSize:"+options.inSampleSize);
+        options.inJustDecodeBounds =false;
+        bitmap = BitmapFactory.decodeFile(path, options);
+        return bitmap;
     }
 }
