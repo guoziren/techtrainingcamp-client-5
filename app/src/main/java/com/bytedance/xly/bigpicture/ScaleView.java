@@ -243,12 +243,12 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
         if (getDrawable() == null) {
             return true;
         }
-        // 缩放因子，>0表示正在放大，<0表示正在缩小
+        // 缩放因子
         float intentScale = detector.getScaleFactor();
         float scale = getScale();
 
         // 进行缩放范围的控制
-        // 判断，如果<最大缩放值，表示可以放大，如果》最小缩放，说明可以缩小
+        // 判断，如果<最大缩放值，表示可以放大，如果>最小缩放，说明可以缩小
         if ((scale < mMaxScale && intentScale > 1.0f) || (scale > mInitScale/2 && intentScale < 1.0f)) {
 
             // scale 变小时， intentScale变小
@@ -445,7 +445,10 @@ public class ScaleView extends androidx.appcompat.widget.AppCompatImageView impl
             case MotionEvent.ACTION_CANCEL:
                 // 手指数清零
                 mLastPointerCount = 0;
-                mMatrix.postScale(mInitScale/getScale(), mInitScale/getScale(), x, y);
+                if(getScale()<mInitScale){
+                    mMatrix.postScale(mInitScale/getScale(), mInitScale/getScale(), x, y);
+                }
+
 
                 // 检测边界与中心点
                 checkSideAndCenterWhenScale();
