@@ -14,10 +14,12 @@ import android.view.MenuItem;
 
 import com.bytedance.xly.R;
 import com.bytedance.xly.filetransfer.view.ReceiveActivity;
+import com.bytedance.xly.tuya.model.BLScrawlParam;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.ToastUtil;
 import com.bytedance.xly.thumbnail.fragment.AlbumFragment;
 import com.bytedance.xly.util.TransferUtil;
+import com.yalantis.ucrop.UCrop;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +41,7 @@ public class PhotoActivity extends AppCompatActivity {
     private static final String PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE;
     private static final int READ_SD_REQUEST_CODE = 355;
     public static final int REQUEST_RECEIVE_FILE = 289;
+    public static final int REQUEST_PREVIEW = 290;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +157,14 @@ public class PhotoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == REQUEST_RECEIVE_FILE){
-            if (albumFragment != null){
-                albumFragment.onActivityResult(requestCode,resultCode,data);
+        if (resultCode == RESULT_OK ) {
+            switch (requestCode) {
+                case REQUEST_RECEIVE_FILE:
+                case REQUEST_PREVIEW:
+                    if (albumFragment != null) {
+                        albumFragment.onActivityResult(requestCode, resultCode, data);
+                    }
+                    break;
             }
         }
     }

@@ -1,10 +1,17 @@
 package com.bytedance.xly.tuya.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -28,10 +36,16 @@ import com.bytedance.xly.tuya.ui.holocolorpicker.OpacityBar;
 import com.bytedance.xly.tuya.ui.holocolorpicker.SVBar;
 import com.bytedance.xly.tuya.util.BLConfigManager;
 import com.bytedance.xly.tuya.util.BLSelectedStateListDrawable;
+import com.bytedance.xly.util.FileUtils;
+import com.bytedance.xly.util.LogUtil;
 
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.widget.ContentLoadingProgressBar;
 
 /**
  * Created by Administrator on 2017/4/21.
@@ -39,6 +53,7 @@ import java.util.List;
  */
 
 public class BLScrawlActivity extends BLToolBarActivity implements View.OnClickListener {
+    private static final String TAG = "BLScrawlActivity";
     private DrawingBoardView mDrawingView;
     private HorizontalListView mHlvPaint;
     private SeekBar mSbPaintSize;
@@ -52,6 +67,25 @@ public class BLScrawlActivity extends BLToolBarActivity implements View.OnClickL
     private int mPaintSize;
     private PopupWindow mPopupWindow;
     private int mPaintColor;
+    private ProgressBar mProgressBar;
+    private static final int ON_SACN_COMPLETED = 1;
+    private Handler mHandler ;
+    private static class BLScrawlHandler extends Handler{
+
+        private WeakReference<BLScrawlActivity> mWeakReference;
+
+        public BLScrawlHandler(BLScrawlActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+             BLScrawlActivity activity = mWeakReference.get();
+            if (msg.what == ON_SACN_COMPLETED){
+                activity.onBackPressed();
+            }
+        }
+    }
 
     @Override
     protected int getContentLayoutId() {
@@ -77,10 +111,12 @@ public class BLScrawlActivity extends BLToolBarActivity implements View.OnClickL
         mTvPaint = getViewById(R.id.scrawl_paint);
         mTvPaintSize = getViewById(R.id.scrawl_paint_size);
         mTvPaintColor = getViewById(R.id.scrawl_paint_color);
+        mProgressBar = getViewById(R.id.progress_bar);
     }
 
     @Override
     protected void otherLogic() {
+        mHandler = new BLScrawlHandler(this);
         mPaintColor = BLConfigManager.getPrimaryColor();
         mParam = getIntent().getParcelableExtra(BLScrawlParam.KEY);
         mSource = BLScrawlParam.bitmap;
@@ -303,12 +339,49 @@ public class BLScrawlActivity extends BLToolBarActivity implements View.OnClickL
         switch (item.getItemId()){
             case R.id.preview_menu:
                     //涂鸦完成
-                    setResult(RESULT_OK);
-                    BLScrawlParam.bitmap = mScrawlTools.getBitmap();
-                    onBackPressed();
-                break;
+                BLScrawlParam.bitmap = mScrawlTools.getBitmap();
+                String path = FileUtils.getRootDirPath() + "tuya_" + System.currentTimeMillis() + ".jpg";
+                saveImageAndExit(path);
+                    break;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private  class SaveImageToSdcardTask extends AsyncTask<String,Void,String>{
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String resultPath = FileUtils.bitmapToSDCard(BLScrawlParam.bitmap,strings[0]);
+            LogUtil.d(TAG, "onOptionsItemSelected: resultPath " + resultPath);
+            return resultPath;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+//                mProgressBar.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(s)) {
+                MediaScannerConnection.scanFile(BLScrawlActivity.this, new String[]{s}, null, new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override
+                    public void onScanCompleted(String path, Uri uri) {
+                        if (uri != null){
+                           setResult(RESULT_OK);
+                        }
+                        mHandler.sendEmptyMessage(ON_SACN_COMPLETED);
+                    }
+                });
+
+            }else{
+              onBackPressed();
+            }
+
+        }
+    }
+    private void saveImageAndExit(String path) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        new SaveImageToSdcardTask().execute(path);
+    }
+
 }

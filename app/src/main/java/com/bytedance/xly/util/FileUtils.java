@@ -43,7 +43,7 @@ public class FileUtils {
     /**
      * 默认的根目录
      */
-    public static final String DEFAULT_ROOT_PATH = "/mnt/download/kuaichuan/";
+    public static final String DEFAULT_ROOT_PATH = "/mnt/download/chakanqi/";
 
     /**
      * 默认的缩略图目录
@@ -72,12 +72,33 @@ public class FileUtils {
     public static String getRootDirPath(){
         String path = DEFAULT_ROOT_PATH;
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-            path = Environment.getExternalStorageDirectory() + "/chakanqi/";
+            path = Environment.getExternalStorageDirectory().getPath() + "/chakanqi/";
         }
         return path;
     }
 
-
+    /**
+     * Bitmap 写入到SD卡
+     *
+     * @param bitmap
+     * @param resPath
+     * @return
+     */
+    public static String bitmapToSDCard(Bitmap bitmap, String resPath){
+        if(bitmap == null){
+            return "";
+        }
+        File resFile = new File(resPath);
+        try {
+            FileOutputStream fos = new FileOutputStream(resFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+            return resPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
     /**
      * 生成本地文件路径
@@ -96,6 +117,7 @@ public class FileUtils {
 
         return file;
     }
+
 
 
     /**

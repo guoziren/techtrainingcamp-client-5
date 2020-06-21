@@ -17,7 +17,7 @@ public class PhotoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.init("xly",true);
+        LogUtil.init("xly",false);
     }
 
 }

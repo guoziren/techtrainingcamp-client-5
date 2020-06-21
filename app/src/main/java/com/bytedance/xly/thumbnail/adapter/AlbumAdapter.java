@@ -13,6 +13,7 @@ import com.bytedance.xly.thumbnail.interfaces.IAdapterListener;
 import com.bytedance.xly.thumbnail.model.bean.AlbumBean;
 import com.bytedance.xly.thumbnail.fragment.AlbumFragment;
 import com.bytedance.xly.thumbnail.view.AlbumView;
+import com.bytedance.xly.util.LogUtil;
 
 import java.util.List;
 
@@ -87,7 +88,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.Holder> {
              int dimension = (mGridLayoutManager.getWidth() - mGridLayoutManager.getPaddingLeft() - mGridLayoutManager.getPaddingRight()
                      - 3 * space)/ mGridLayoutManager.getSpanCount();
              loadOverrideImage(albumBean.getThumbPath(),((AlbumView)itemView).getIvThumb(),dimension);
-
              itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

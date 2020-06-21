@@ -6,10 +6,14 @@ import android.content.Intent;
 
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -29,6 +33,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.bytedance.xly.R;
 import com.bytedance.xly.thumbnail.model.bean.AlbumBean;
 import com.bytedance.xly.tuya.model.BLScrawlParam;
+import com.bytedance.xly.tuya.ui.BLScrawlActivity;
+import com.bytedance.xly.util.FileUtils;
 import com.bytedance.xly.util.LogUtil;
 import com.bytedance.xly.util.TransferUtil;
 import com.yalantis.ucrop.UCrop;
@@ -37,8 +43,10 @@ import com.yalantis.ucrop.UCropActivity;
 
 import java.io.File;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class PreviewActivity extends AppCompatActivity {
@@ -53,6 +61,26 @@ public class PreviewActivity extends AppCompatActivity {
     private boolean isFirst=true;
     private TextView mBtnTuya;
     private TextView mBtnCaiJian;
+    private static final int ON_SACN_COMPLETED = 1;
+    private Handler mHandler ;
+    private static class ActivityHandler extends Handler{
+
+
+        private WeakReference<PreviewActivity> mWeakReference;
+
+        public ActivityHandler(PreviewActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            PreviewActivity activity = mWeakReference.get();
+            if (msg.what == ON_SACN_COMPLETED){
+                activity.onBackPressed();
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +149,7 @@ public class PreviewActivity extends AppCompatActivity {
     private void gotoUCropActivity() {
         File sourceFile = new File(picturePath.get(currentPage).getPath());
         Uri source = Uri.fromFile(sourceFile);
-        Uri destination = Uri.fromFile(new File(getCacheDir(), "caijian_"+sourceFile.getName()));
+        Uri destination = Uri.fromFile(new File(FileUtils.getRootDirPath(), "caijian_"+sourceFile.getName()));
         UCrop uCrop = UCrop.of(source, destination);
 
         uCrop.useSourceImageAspectRatio();
@@ -143,24 +171,30 @@ public class PreviewActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        LogUtil.d(TAG, "onActivityResult: resultCode == RESULT_OK " + (resultCode == RESULT_OK));
         if (resultCode == RESULT_OK){
             switch (requestCode){
                 case UCrop.REQUEST_CROP:
                     LogUtil.d(TAG, "onActivityResult: 裁剪成功");
-//                    Uri croppedUri = UCrop.getOutput(data);
-//                    File croppedFile = new File(croppedUri.getPath());
-//                    // 通知相册有新图片
-//                    try {
-//                        MediaStore.Images.Media.insertImage(getContentResolver(),
-//                                croppedFile.getAbsolutePath(),croppedFile.getName() , null);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                    intent.setData(croppedUri);
-//                    Main2Activity.this.sendBroadcast(intent);
+                    Uri croppedUri = UCrop.getOutput(data);
+                    // 通知相册有新图片
+                    MediaScannerConnection.scanFile(this, new String[]{croppedUri.getPath()}, null, new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String path, Uri uri) {
+                            if (uri != null){
+                                setResult(RESULT_OK);
+                            }
+                            mHandler.sendEmptyMessage(ON_SACN_COMPLETED);
+                        }
+                    });
+
                     break;
-            }
+                case BLScrawlParam.REQUEST_CODE_SCRAWL:
+                    LogUtil.d(TAG, "onActivityResult: 涂鸦成功");
+                    setResult(RESULT_OK);
+                    onBackPressed();
+                    break;
+            }//switch
         }
     }
 
@@ -212,6 +246,7 @@ public class PreviewActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void initView(){
         Intent intent = getIntent();
+        mHandler = new ActivityHandler(this);
         this.picturePath = (List<AlbumBean>) intent.getSerializableExtra("picturePath");
         currentPage = intent.getIntExtra("CurrentPage",0);
         ViewPage = findViewById(R.id.ViewPage);

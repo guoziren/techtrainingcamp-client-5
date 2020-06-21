@@ -14,6 +14,7 @@ import com.bytedance.xly.R;
 import com.bytedance.xly.thumbnail.adapter.DateAlbumAdapter;
 import com.bytedance.xly.filetransfer.model.FileSenderRunnable;
 import com.bytedance.xly.filetransfer.model.entity.FileInfo;
+import com.bytedance.xly.tuya.model.BLScrawlParam;
 import com.bytedance.xly.util.TransferUtil;
 import com.bytedance.xly.filetransfer.view.SenderActivity;
 import com.bytedance.xly.thumbnail.interfaces.IAdapterListener;
@@ -26,6 +27,7 @@ import com.bytedance.xly.util.ToastUtil;
 import com.bytedance.xly.thumbnail.activity.PhotoActivity;
 import com.bytedance.xly.thumbnail.view.AlbumBottomMenu;
 import com.bytedance.xly.thumbnail.view.IDateAlbumViewCallback;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.Serializable;
@@ -45,7 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * 创建时间：      2020/6/3 10:57 AM
  *
  */
-public class AlbumFragment extends Fragment implements IDateAlbumListener, IDateAlbumViewCallback,IAdapterListener<AlbumBean> {
+public class AlbumFragment extends Fragment implements IDateAlbumListener, IDateAlbumViewCallback, IAdapterListener<AlbumBean> {
     public static boolean isChooseMode = false;
     private List<DateAlbumBean> choosedCache = new ArrayList<>();
     private static final String TAG = "AlbumFragment";
@@ -63,7 +65,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_album,container,false);
+        View view = inflater.inflate(R.layout.fragment_album, container, false);
         initView(view);
         return view;
     }
@@ -73,7 +75,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         mProgressBar = view.findViewById(R.id.pb_loading);
         mBottomMenu = view.findViewById(R.id.album_menu);
 
-        mAdapter = new DateAlbumAdapter(mData,getContext());
+        mAdapter = new DateAlbumAdapter(mData, getContext());
 
         mAdapter.setListener(this);
 
@@ -87,7 +89,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         mBottomMenu.setMenuListener(new AlbumBottomMenu.AlubmBottomMenuListener() {
             @Override
             public void onDeleteClick() {
-            //    showConfirmDelete();
+                //    showConfirmDelete();
             }
 
             /**
@@ -97,8 +99,8 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             public void onShareClick() {
                 LogUtil.d(TAG, "onShareClick: ");
                 Intent intent = new Intent(getActivity(), SenderActivity.class);
-                if (choosedCache.size() == 0){
-                    ToastUtil.showToast(getActivity(), Toast.LENGTH_LONG,"尚未选择图片");
+                if (choosedCache.size() == 0) {
+                    ToastUtil.showToast(getActivity(), Toast.LENGTH_LONG, "尚未选择图片");
                     return;
                 }
                 //准备发送数据
@@ -120,7 +122,6 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         });
 
     }
-
 
 
     /**
@@ -161,7 +162,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
 
     @Override
     public void onChooseModeChange(boolean isChoose) {
-        ((PhotoActivity)getActivity()).onChooseModeChange(isChoose);
+        ((PhotoActivity) getActivity()).onChooseModeChange(isChoose);
     }
 
     @Override
@@ -171,6 +172,7 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter.setData(dateAlbumList);
     }
+
     //一个相片缩略图的点击事件
     @Override
     public void onItemClick(AlbumBean albumBean, View v) {
@@ -205,8 +207,8 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
             if (index >= 0) {
                 Intent intent = new Intent(getContext(), PreviewActivity.class);
                 intent.putExtra("picturePath", (Serializable) ab.getItemList());
-                intent.putExtra("CurrentPage",index);
-                Objects.requireNonNull(getContext()).startActivity(intent);//去激活PreviewActivity
+                intent.putExtra("CurrentPage", index);
+                getActivity().startActivityForResult(intent,PhotoActivity.REQUEST_PREVIEW);//去激活PreviewActivity
             }
         }
     }
@@ -229,14 +231,17 @@ public class AlbumFragment extends Fragment implements IDateAlbumListener, IDate
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK){
+        if (resultCode == getActivity().RESULT_OK) {
             LogUtil.d(TAG, "onActivityResult: RESULT_OK");
-            if (requestCode == PhotoActivity.REQUEST_RECEIVE_FILE){
-                //成功收到了文件，更新相册
-                mProgressBar.setVisibility(View.VISIBLE);
-                mAlbumPresenter.getDateAlbumList(getActivity());
+            switch (requestCode) {
+                case PhotoActivity.REQUEST_RECEIVE_FILE:
+                case PhotoActivity.REQUEST_PREVIEW:
+                    //更新相册
+                    mProgressBar.setVisibility(View.VISIBLE);
+
+                    mAlbumPresenter.getDateAlbumList(getActivity());
+                    break;
             }
         }
-
     }
 }
