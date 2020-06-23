@@ -19,7 +19,19 @@ Android 图片查看器 by Tech-Training-Camp-Client-5
 - androidstudio version 3.6.3
 - gradle version 5.6.4-all
 
+测试机型:
+
+- 坚果Pro2S Android8.1.0
+
 ## 效果
+
+![image-20200623195346752](.README_images/image-20200623195346752.png)
+
+![image-20200623195412314](.README_images/image-20200623195412314.png)
+
+![image-20200623195435513](.README_images/image-20200623195435513.png)
+
+![image-20200623195452208](.README_images/image-20200623195452208.png)
 
 选择->发送
 
