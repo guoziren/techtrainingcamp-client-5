@@ -1,5 +1,5 @@
 # 本地图片查看器
-Android 图片查看器 by 字节跳动客户端训练营第5小组!
+Android 图片查看器 by Tech-Training-Camp-Client-5
 
 功能:
 

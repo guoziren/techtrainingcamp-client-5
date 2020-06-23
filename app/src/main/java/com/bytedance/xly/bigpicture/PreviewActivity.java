@@ -177,7 +177,6 @@ public class PreviewActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK){
             switch (requestCode){
                 case UCrop.REQUEST_CROP:
-                    LogUtil.d(TAG, "onActivityResult: 裁剪成功");
                     Uri croppedUri = UCrop.getOutput(data);
                     // 通知相册有新图片
                     MediaScannerConnection.scanFile(this, new String[]{croppedUri.getPath()}, null, new MediaScannerConnection.OnScanCompletedListener() {
@@ -186,6 +185,7 @@ public class PreviewActivity extends AppCompatActivity {
                             if (uri != null){
                                 setResult(RESULT_OK);
                             }
+                            LogUtil.d(TAG, "onScanCompleted: path = " + path + "  uri = " + uri);
                             mHandler.sendEmptyMessage(ON_SACN_COMPLETED);
                         }
                     });
